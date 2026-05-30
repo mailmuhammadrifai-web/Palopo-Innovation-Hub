@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Kelola Lomba Inovasi | Admin Palopo Innovation Hub</title>
+  <!-- Tailwind + Font Awesome + Chart.js -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #f1f5f9; }
+    .modal-transition { transition: opacity 0.2s, visibility 0.2s; }
+    .winner-badge { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- Top Navigation -->
+  <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
+    <div class="px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <div class="bg-indigo-600 w-8 h-8 rounded-lg flex items-center justify-center">
+            <i class="fas fa-flag-checkered text-white text-sm"></i>
+          </div>
+          <span class="font-bold text-gray-800 ml-2">Palopo Innovation Hub</span>
+          <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-0.5 rounded-full ml-3">Admin Panel</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <i class="fas fa-download text-gray-500 cursor-pointer hover:text-indigo-600" id="exportBtn" title="Ekspor Data Lomba"></i>
+          <div class="relative">
+            <button id="profileBtn" class="flex items-center gap-2 focus:outline-none">
+              <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-800 font-bold text-sm">AD</div>
+              <span class="text-sm font-medium text-gray-700 hidden md:block" id="userName">Admin</span>
+              <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+            </button>
+            <div id="dropdownMenu" class="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border hidden z-30">
+              <a href="#" id="logoutLink" class="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Layout dengan Sidebar -->
+  <div class="flex">
+    <!-- Sidebar (desktop) -->
+    <aside class="w-64 bg-white border-r border-gray-200 min-h-screen hidden md:block">
+      <div class="p-4 space-y-1">
+        <a href="dashboard-admin.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-tachometer-alt w-5"></i> <span>Dashboard</span>
+        </a>
+        <a href="kelola-inovasi.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-lightbulb w-5"></i> <span>Kelola Inovasi</span>
+        </a>
+        <a href="indikator-spd.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-chart-simple w-5"></i> <span>Indikator SPD</span>
+        </a>
+        <a href="kelola-hki.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-copyright w-5"></i> <span>HKI & Fasilitasi</span>
+        </a>
+        <a href="kelola-monev.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-clipboard-list w-5"></i> <span>Monev & Evaluasi</span>
+        </a>
+        <a href="kelola-lomba.html" class="flex items-center gap-3 px-3 py-2 text-indigo-600 bg-indigo-50 rounded-lg">
+          <i class="fas fa-flag-checkered w-5"></i> <span>Lomba Inovasi</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-users w-5"></i> <span>Manajemen OPD</span>
+        </a>
+        <a href="login.html" id="sidebarLogout" class="flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg mt-8">
+          <i class="fas fa-sign-out-alt w-5"></i> <span>Keluar</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8">
+      <!-- Header -->
+      <div class="mb-6 flex flex-wrap justify-between items-center">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800">Kelola Lomba Inovasi</h1>
+          <p class="text-gray-500 text-sm">Buat lomba, nilai proposal, dan umumkan pemenang untuk menjaring inovasi terbaik.</p>
+        </div>
+        <button id="addLombaBtn" class="mt-2 sm:mt-0 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow">
+          <i class="fas fa-plus mr-1"></i> Buat Lomba Baru
+        </button>
+      </div>
+
+      <!-- Daftar Lomba (cards) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8" id="lombaContainer">
+        <!-- data lomba akan diisi JS -->
+      </div>
+
+      <!-- Tabel Proposal Peserta per Lomba (dinamis) -->
+      <div class="bg-white rounded-xl shadow overflow-hidden" id="proposalSection" style="display: none;">
+        <div class="px-5 py-4 border-b flex justify-between items-center bg-gray-50">
+          <h3 class="font-bold text-gray-700" id="selectedLombaTitle">Proposal Peserta - </h3>
+          <button id="closeProposalBtn" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i> Tutup</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Peserta / OPD</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Nama Inovasi</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Skor Kemanfaatan</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Skor Kualitas</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Skor Kecepatan</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Status</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="proposalTableBody">
+              <!-- data dari JS -->
+            </tbody>
+          </table>
+        </div>
+        <div class="px-5 py-3 border-t flex justify-end">
+          <button id="announceWinnerBtn" class="bg-yellow-500 text-white px-4 py-1.5 rounded-lg text-sm">🏆 Umumkan Pemenang</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Buat / Edit Lomba -->
+  <div id="lombaModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm modal-transition">
+    <div class="bg-white rounded-2xl max-w-lg w-full mx-4 p-6">
+      <h3 class="text-xl font-bold mb-4" id="modalLombaTitle">Buat Lomba Baru</h3>
+      <form id="lombaForm">
+        <input type="hidden" id="editLombaId">
+        <div class="mb-3"><label class="block text-sm font-medium">Nama Lomba *</label><input type="text" id="namaLomba" required class="w-full border rounded-lg px-3 py-2"></div>
+        <div class="mb-3"><label class="block text-sm font-medium">Tema / Kategori</label><input type="text" id="temaLomba" class="w-full border rounded-lg px-3 py-2"></div>
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <div><label class="block text-sm font-medium">Periode Mulai</label><input type="date" id="tglMulai" class="w-full border rounded-lg px-3 py-2"></div>
+          <div><label class="block text-sm font-medium">Periode Selesai</label><input type="date" id="tglSelesai" class="w-full border rounded-lg px-3 py-2"></div>
+        </div>
+        <div class="mb-3"><label class="block text-sm font-medium">Deskripsi</label><textarea id="deskripsiLomba" rows="2" class="w-full border rounded-lg px-3 py-2"></textarea></div>
+        <div class="flex justify-end gap-3"><button type="button" id="closeLombaModal" class="px-4 py-2 border rounded-lg">Batal</button><button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg">Simpan</button></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Nilai Proposal -->
+  <div id="nilaiModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm modal-transition">
+    <div class="bg-white rounded-2xl max-w-md w-full mx-4 p-6">
+      <h3 class="text-xl font-bold mb-4">Penilaian Proposal</h3>
+      <form id="nilaiForm">
+        <input type="hidden" id="nilaiProposalId">
+        <div class="mb-3"><label class="block text-sm font-medium">Skor Kemanfaatan (0-100)</label><input type="number" id="skorManfaat" min="0" max="100" class="w-full border rounded-lg px-3 py-2"></div>
+        <div class="mb-3"><label class="block text-sm font-medium">Skor Kualitas Inovasi (0-100)</label><input type="number" id="skorKualitas" min="0" max="100" class="w-full border rounded-lg px-3 py-2"></div>
+        <div class="mb-3"><label class="block text-sm font-medium">Skor Kecepatan Penciptaan (0-100)</label><input type="number" id="skorKecepatan" min="0" max="100" class="w-full border rounded-lg px-3 py-2"></div>
+        <div class="mb-3"><label class="block text-sm font-medium">Catatan Juri</label><textarea id="catatanJuri" rows="2" class="w-full border rounded-lg px-3 py-2"></textarea></div>
+        <div class="flex justify-end gap-3"><button type="button" id="closeNilaiModal" class="px-4 py-2 border rounded-lg">Batal</button><button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg">Simpan Nilai</button></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Data lomba
+    let lombaData = [
+      { id: 1, nama: "Inovasi Pelayanan Publik 2026", tema: "Digitalisasi Layanan", tglMulai: "2026-03-01", tglSelesai: "2026-05-30", deskripsi: "Lomba inovasi bagi OPD dan masyarakat", status: "Aktif" },
+      { id: 2, nama: "Lomba Inovasi Desa Cerdas", tema: "Desa Digital", tglMulai: "2026-04-10", tglSelesai: "2026-06-15", deskripsi: "Kategori khusus desa", status: "Aktif" },
+      { id: 3, nama: "Hackathon Inovasi Daerah", tema: "Solusi Perkotaan", tglMulai: "2026-01-01", tglSelesai: "2026-02-28", deskripsi: "Telah selesai", status: "Selesai", pemenang: "SIPAKATAU" }
+    ];
+
+    // Data proposal (peserta lomba)
+    let proposalData = [
+      { id: 1, lombaId: 1, peserta: "Dinas Pendidikan", inovasi: "SIPAKATAU", skorManfaat: 92, skorKualitas: 88, skorKecepatan: 85, status: "Dinilai", catatan: "Inovasi unggulan" },
+      { id: 2, lombaId: 1, peserta: "Dinas Kesehatan", inovasi: "Layanan Sehat Palopo", skorManfaat: 88, skorKualitas: 90, skorKecepatan: 82, status: "Dinilai", catatan: "Baik" },
+      { id: 3, lombaId: 1, peserta: "Diskominfo", inovasi: "SIMLING", skorManfaat: 85, skorKualitas: 84, skorKecepatan: 80, status: "Menunggu", catatan: "" },
+      { id: 4, lombaId: 2, peserta: "Desa Salut", inovasi: "E-Village", skorManfaat: null, skorKualitas: null, skorKecepatan: null, status: "Menunggu", catatan: "" },
+      { id: 5, lombaId: 2, peserta: "Desa Buntu", inovasi: "Layanan Aspirasi", skorManfaat: null, skorKualitas: null, skorKecepatan: null, status: "Menunggu", catatan: "" }
+    ];
+
+    // Simpan ke localStorage
+    function saveLomba() { localStorage.setItem('lomba_data', JSON.stringify(lombaData)); }
+    function saveProposal() { localStorage.setItem('proposal_data', JSON.stringify(proposalData)); }
+    function loadData() {
+      const storedLomba = localStorage.getItem('lomba_data');
+      if (storedLomba) lombaData = JSON.parse(storedLomba);
+      const storedProposal = localStorage.getItem('proposal_data');
+      if (storedProposal) proposalData = JSON.parse(storedProposal);
+    }
+    loadData();
+
+    // Render daftar lomba (cards)
+    function renderLombaCards() {
+      const container = document.getElementById('lombaContainer');
+      if (lombaData.length === 0) {
+        container.innerHTML = '<div class="col-span-full text-center py-10 text-gray-400">Belum ada lomba. Klik "Buat Lomba Baru" untuk memulai.</div>';
+        return;
+      }
+      container.innerHTML = lombaData.map(lomba => `
+        <div class="bg-white rounded-xl shadow border border-gray-200 overflow-hidden">
+          <div class="p-5">
+            <div class="flex justify-between items-start">
+              <h3 class="font-bold text-lg text-gray-800">${escapeHtml(lomba.nama)}</h3>
+              <span class="px-2 py-1 rounded-full text-xs ${lomba.status === 'Aktif' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}">${lomba.status}</span>
+            </div>
+            <p class="text-sm text-gray-500 mt-1">Tema: ${lomba.tema || '-'}</p>
+            <p class="text-xs text-gray-400 mt-2">Periode: ${lomba.tglMulai} s/d ${lomba.tglSelesai}</p>
+            <p class="text-sm text-gray-600 mt-2">${lomba.deskripsi || ''}</p>
+            ${lomba.pemenang ? `<div class="mt-3 inline-flex items-center gap-1 bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs"><i class="fas fa-trophy"></i> Pemenang: ${lomba.pemenang}</div>` : ''}
+            <div class="mt-4 flex gap-2">
+              <button onclick="viewProposals(${lomba.id})" class="text-indigo-600 text-sm border border-indigo-200 px-3 py-1 rounded-lg hover:bg-indigo-50"><i class="fas fa-eye"></i> Lihat Proposal</button>
+              <button onclick="editLomba(${lomba.id})" class="text-blue-600 text-sm"><i class="fas fa-edit"></i></button>
+              <button onclick="deleteLomba(${lomba.id})" class="text-red-600 text-sm"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+    // Tampilkan proposal untuk lomba tertentu
+    let currentLombaId = null;
+    function viewProposals(lombaId) {
+      currentLombaId = lombaId;
+      const lomba = lombaData.find(l => l.id === lombaId);
+      if (!lomba) return;
+      document.getElementById('selectedLombaTitle').innerHTML = `Proposal Peserta - ${escapeHtml(lomba.nama)}`;
+      const proposals = proposalData.filter(p => p.lombaId === lombaId);
+      const tbody = document.getElementById('proposalTableBody');
+      if (proposals.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-gray-400">Belum ada proposal yang masuk.学</tr>';
+      } else {
+        tbody.innerHTML = proposals.map(prop => {
+          const totalSkor = (prop.skorManfaat && prop.skorKualitas && prop.skorKecepatan) ? 
+            ((prop.skorManfaat + prop.skorKualitas + prop.skorKecepatan) / 3).toFixed(1) : '-';
+          return `
+            <tr class="hover:bg-gray-50">
+              <td class="px-4 py-3 text-sm">${escapeHtml(prop.peserta)}</td>
+              <td class="px-4 py-3 text-sm">${escapeHtml(prop.inovasi)}</td>
+              <td class="px-4 py-3 text-sm">${prop.skorManfaat || '-'}</td>
+              <td class="px-4 py-3 text-sm">${prop.skorKualitas || '-'}</td>
+              <td class="px-4 py-3 text-sm">${prop.skorKecepatan || '-'}</td>
+              <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs ${prop.status === 'Dinilai' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">${prop.status}</span></td>
+              <td class="px-4 py-3"><button onclick="openNilaiModal(${prop.id})" class="text-indigo-600 text-sm hover:underline">${prop.status === 'Dinilai' ? 'Edit Nilai' : 'Beri Nilai'}</button></td>
+            </tr>
+          `;
+        }).join('');
+      }
+      document.getElementById('proposalSection').style.display = 'block';
+    }
+
+    // Modal Lomba
+    const lombaModal = document.getElementById('lombaModal');
+    function openLombaModal(editId = null) {
+      if (editId) {
+        const lomba = lombaData.find(l => l.id === editId);
+        if (lomba) {
+          document.getElementById('editLombaId').value = lomba.id;
+          document.getElementById('namaLomba').value = lomba.nama;
+          document.getElementById('temaLomba').value = lomba.tema || '';
+          document.getElementById('tglMulai').value = lomba.tglMulai || '';
+          document.getElementById('tglSelesai').value = lomba.tglSelesai || '';
+          document.getElementById('deskripsiLomba').value = lomba.deskripsi || '';
+          document.getElementById('modalLombaTitle').innerText = 'Edit Lomba';
+        }
+      } else {
+        document.getElementById('editLombaId').value = '';
+        document.getElementById('lombaForm').reset();
+        document.getElementById('modalLombaTitle').innerText = 'Buat Lomba Baru';
+      }
+      lombaModal.style.display = 'flex';
+      lombaModal.style.visibility = 'visible';
+    }
+    function closeLombaModal() { lombaModal.style.display = 'none'; lombaModal.style.visibility = 'hidden'; }
+    document.getElementById('addLombaBtn').addEventListener('click', () => openLombaModal(null));
+    document.getElementById('closeLombaModal').addEventListener('click', closeLombaModal);
+    window.addEventListener('click', (e) => { if (e.target === lombaModal) closeLombaModal(); });
+    window.editLomba = (id) => openLombaModal(id);
+    window.deleteLomba = (id) => {
+      if (confirm('Hapus lomba ini? Semua proposal terkait juga akan dihapus.')) {
+        lombaData = lombaData.filter(l => l.id !== id);
+        proposalData = proposalData.filter(p => p.lombaId !== id);
+        saveLomba(); saveProposal();
+        renderLombaCards();
+        if (currentLombaId === id) document.getElementById('proposalSection').style.display = 'none';
+      }
+    };
+
+    document.getElementById('lombaForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('editLombaId').value;
+      const nama = document.getElementById('namaLomba').value.trim();
+      const tema = document.getElementById('temaLomba').value;
+      const tglMulai = document.getElementById('tglMulai').value;
+      const tglSelesai = document.getElementById('tglSelesai').value;
+      const deskripsi = document.getElementById('deskripsiLomba').value;
+      if (!nama) return alert('Nama lomba wajib diisi');
+      if (id) {
+        const index = lombaData.findIndex(l => l.id == id);
+        if (index !== -1) {
+          lombaData[index] = { ...lombaData[index], nama, tema, tglMulai, tglSelesai, deskripsi };
+        }
+      } else {
+        const newId = Date.now();
+        lombaData.push({ id: newId, nama, tema, tglMulai, tglSelesai, deskripsi, status: 'Aktif' });
+      }
+      saveLomba();
+      renderLombaCards();
+      closeLombaModal();
+    });
+
+    // Modal Penilaian Proposal
+    const nilaiModal = document.getElementById('nilaiModal');
+    let currentProposalId = null;
+    window.openNilaiModal = (proposalId) => {
+      currentProposalId = proposalId;
+      const proposal = proposalData.find(p => p.id === proposalId);
+      if (proposal) {
+        document.getElementById('nilaiProposalId').value = proposal.id;
+        document.getElementById('skorManfaat').value = proposal.skorManfaat || '';
+        document.getElementById('skorKualitas').value = proposal.skorKualitas || '';
+        document.getElementById('skorKecepatan').value = proposal.skorKecepatan || '';
+        document.getElementById('catatanJuri').value = proposal.catatan || '';
+      }
+      nilaiModal.style.display = 'flex';
+      nilaiModal.style.visibility = 'visible';
+    };
+    function closeNilaiModal() { nilaiModal.style.display = 'none'; nilaiModal.style.visibility = 'hidden'; }
+    document.getElementById('closeNilaiModal').addEventListener('click', closeNilaiModal);
+    window.addEventListener('click', (e) => { if (e.target === nilaiModal) closeNilaiModal(); });
+
+    document.getElementById('nilaiForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const proposalId = parseInt(document.getElementById('nilaiProposalId').value);
+      const skorManfaat = parseInt(document.getElementById('skorManfaat').value) || null;
+      const skorKualitas = parseInt(document.getElementById('skorKualitas').value) || null;
+      const skorKecepatan = parseInt(document.getElementById('skorKecepatan').value) || null;
+      const catatan = document.getElementById('catatanJuri').value;
+      const proposal = proposalData.find(p => p.id === proposalId);
+      if (proposal) {
+        proposal.skorManfaat = skorManfaat;
+        proposal.skorKualitas = skorKualitas;
+        proposal.skorKecepatan = skorKecepatan;
+        proposal.catatan = catatan;
+        proposal.status = (skorManfaat !== null && skorKualitas !== null && skorKecepatan !== null) ? 'Dinilai' : 'Menunggu';
+        saveProposal();
+        if (currentLombaId) viewProposals(currentLombaId);
+        closeNilaiModal();
+      }
+    });
+
+    // Pengumuman pemenang (berdasarkan total skor tertinggi)
+    document.getElementById('announceWinnerBtn').addEventListener('click', () => {
+      if (!currentLombaId) return;
+      const proposals = proposalData.filter(p => p.lombaId === currentLombaId && p.status === 'Dinilai');
+      if (proposals.length === 0) {
+        alert('Belum ada proposal yang dinilai. Silakan nilai proposal terlebih dahulu.');
+        return;
+      }
+      // Hitung total skor rata-rata
+      const withTotal = proposals.map(p => ({
+        ...p,
+        total: (p.skorManfaat + p.skorKualitas + p.skorKecepatan) / 3
+      }));
+      const winner = withTotal.reduce((max, p) => p.total > max.total ? p : max, withTotal[0]);
+      const lomba = lombaData.find(l => l.id === currentLombaId);
+      if (lomba) {
+        lomba.pemenang = winner.inovasi;
+        lomba.status = 'Selesai';
+        saveLomba();
+        renderLombaCards();
+        alert(`🏆 Pemenang untuk lomba "${lomba.nama}" adalah ${winner.inovasi} dengan skor ${winner.total.toFixed(1)}. Pemenang dapat diusulkan ke tingkat provinsi/nasional.`);
+        viewProposals(currentLombaId); // refresh tabel
+      }
+    });
+
+    document.getElementById('closeProposalBtn').addEventListener('click', () => {
+      document.getElementById('proposalSection').style.display = 'none';
+      currentLombaId = null;
+    });
+
+    // Ekspor CSV (seluruh data lomba dan proposal)
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      let csv = "Lomba,Nama Inovasi,Peserta,Skor Manfaat,Skor Kualitas,Skor Kecepatan,Status\n";
+      proposalData.forEach(p => {
+        const lomba = lombaData.find(l => l.id === p.lombaId);
+        csv += `${lomba ? lomba.nama : '-'},${p.inovasi},${p.peserta},${p.skorManfaat || ''},${p.skorKualitas || ''},${p.skorKecepatan || ''},${p.status}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'lomba_proposal.csv';
+      link.click();
+      URL.revokeObjectURL(link.href);
+    });
+
+    // Logout
+    function logout() { sessionStorage.removeItem('loggedInUser'); window.location.href = 'login.html'; }
+    document.getElementById('logoutLink').addEventListener('click', (e) => { e.preventDefault(); logout(); });
+    document.getElementById('sidebarLogout').addEventListener('click', (e) => { e.preventDefault(); logout(); });
+
+    // Profile dropdown
+    const profileBtn = document.getElementById('profileBtn');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    profileBtn.addEventListener('click', () => dropdownMenu.classList.toggle('hidden'));
+    document.addEventListener('click', (e) => { if (!profileBtn.contains(e.target)) dropdownMenu.classList.add('hidden'); });
+
+    // Set user name
+    const userData = sessionStorage.getItem('loggedInUser');
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        if (user.name) document.getElementById('userName').innerText = user.name;
+      } catch(e) {}
+    }
+
+    renderLombaCards();
+  </script>
+</body>
+</html>
