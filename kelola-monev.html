@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Kelola Monev & Evaluasi | Admin Palopo Innovation Hub</title>
+  <!-- Tailwind + Font Awesome + Chart.js -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #f1f5f9; }
+    .modal-transition { transition: opacity 0.2s, visibility 0.2s; }
+    .status-badge { transition: all 0.1s; }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- Top Navigation -->
+  <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
+    <div class="px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <div class="bg-indigo-600 w-8 h-8 rounded-lg flex items-center justify-center">
+            <i class="fas fa-clipboard-list text-white text-sm"></i>
+          </div>
+          <span class="font-bold text-gray-800 ml-2">Palopo Innovation Hub</span>
+          <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-0.5 rounded-full ml-3">Admin Panel</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <i class="fas fa-download text-gray-500 cursor-pointer hover:text-indigo-600" id="exportBtn" title="Ekspor Data Monev"></i>
+          <div class="relative">
+            <button id="profileBtn" class="flex items-center gap-2 focus:outline-none">
+              <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-800 font-bold text-sm">AD</div>
+              <span class="text-sm font-medium text-gray-700 hidden md:block" id="userName">Admin</span>
+              <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+            </button>
+            <div id="dropdownMenu" class="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border hidden z-30">
+              <a href="#" id="logoutLink" class="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Layout dengan Sidebar -->
+  <div class="flex">
+    <!-- Sidebar (desktop) -->
+    <aside class="w-64 bg-white border-r border-gray-200 min-h-screen hidden md:block">
+      <div class="p-4 space-y-1">
+        <a href="dashboard-admin.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-tachometer-alt w-5"></i> <span>Dashboard</span>
+        </a>
+        <a href="kelola-inovasi.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-lightbulb w-5"></i> <span>Kelola Inovasi</span>
+        </a>
+        <a href="indikator-spd.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-chart-simple w-5"></i> <span>Indikator SPD</span>
+        </a>
+        <a href="kelola-hki.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-copyright w-5"></i> <span>HKI & Fasilitasi</span>
+        </a>
+        <a href="kelola-monev.html" class="flex items-center gap-3 px-3 py-2 text-indigo-600 bg-indigo-50 rounded-lg">
+          <i class="fas fa-clipboard-list w-5"></i> <span>Monev & Evaluasi</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-flag-checkered w-5"></i> <span>Lomba Inovasi</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-users w-5"></i> <span>Manajemen OPD</span>
+        </a>
+        <a href="login.html" id="sidebarLogout" class="flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg mt-8">
+          <i class="fas fa-sign-out-alt w-5"></i> <span>Keluar</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8">
+      <!-- Header -->
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Monitoring & Evaluasi Inovasi</h1>
+        <p class="text-gray-500 text-sm">Pantau laporan monev triwulan OPD, survei kepuasan, dan evaluasi eksternal.</p>
+      </div>
+
+      <!-- Statistik Ringkas -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+        <div class="bg-white rounded-xl shadow p-4 border-l-4 border-green-500">
+          <div class="text-gray-500 text-sm">On Track</div>
+          <div class="text-2xl font-bold" id="onTrackCount">0</div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4 border-l-4 border-yellow-500">
+          <div class="text-gray-500 text-sm">Perlu Perhatian</div>
+          <div class="text-2xl font-bold" id="needAttentionCount">0</div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4 border-l-4 border-red-500">
+          <div class="text-gray-500 text-sm">Tidak Berjalan</div>
+          <div class="text-2xl font-bold" id="notRunningCount">0</div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4 border-l-4 border-blue-500">
+          <div class="text-gray-500 text-sm">Rata-rata Kepuasan</div>
+          <div class="text-2xl font-bold" id="avgSatisfaction">0%</div>
+        </div>
+      </div>
+
+      <!-- Filter & Pencarian -->
+      <div class="bg-white rounded-xl shadow p-4 mb-6 flex flex-wrap gap-3 items-center justify-between">
+        <div class="flex flex-wrap gap-3">
+          <select id="statusFilter" class="border rounded-lg px-3 py-1.5 text-sm">
+            <option value="all">Semua Status</option>
+            <option value="On Track">On Track</option>
+            <option value="Perlu Perhatian">Perlu Perhatian</option>
+            <option value="Tidak Berjalan">Tidak Berjalan</option>
+          </select>
+          <select id="triwulanFilter" class="border rounded-lg px-3 py-1.5 text-sm">
+            <option value="all">Semua Triwulan</option>
+            <option value="1">Triwulan 1</option>
+            <option value="2">Triwulan 2</option>
+            <option value="3">Triwulan 3</option>
+            <option value="4">Triwulan 4</option>
+          </select>
+          <input type="text" id="searchInput" placeholder="Cari inovasi / OPD..." class="border rounded-lg px-3 py-1.5 text-sm w-64">
+          <button id="resetFilterBtn" class="text-indigo-600 text-sm"><i class="fas fa-undo-alt"></i> Reset</button>
+        </div>
+        <button id="addMonevBtn" class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-sm"><i class="fas fa-plus"></i> Tambah Laporan Monev</button>
+      </div>
+
+      <!-- Tabel Monev Inovasi -->
+      <div class="bg-white rounded-xl shadow overflow-hidden mb-6">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Inovasi</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">OPD</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Triwulan</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Status Monev</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Skor Kualitas</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Capaian / Kendala</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="monevTableBody" class="divide-y divide-gray-100">
+              <!-- data dari JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Grafik Survei Kepuasan & Evaluasi Eksternal -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white rounded-xl shadow p-5">
+          <h3 class="font-bold text-gray-700 mb-3"><i class="fas fa-smile text-green-500"></i> Survei Kepuasan Pengguna (per inovasi)</h3>
+          <canvas id="satisfactionChart" height="200"></canvas>
+        </div>
+        <div class="bg-white rounded-xl shadow p-5">
+          <h3 class="font-bold text-gray-700 mb-3"><i class="fas fa-file-alt text-blue-500"></i> Evaluasi Eksternal</h3>
+          <div id="externalEvalList" class="space-y-3 max-h-64 overflow-y-auto">
+            <!-- dynamic -->
+          </div>
+          <button id="uploadEvalBtn" class="mt-3 w-full bg-blue-50 text-blue-600 border border-blue-200 rounded-lg py-1.5 text-sm hover:bg-blue-100"><i class="fas fa-upload"></i> Unggah Hasil Kajian Eksternal</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Tambah / Edit Monev -->
+  <div id="monevModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm modal-transition">
+    <div class="bg-white rounded-2xl max-w-lg w-full mx-4 p-6">
+      <h3 class="text-xl font-bold mb-4" id="modalTitle">Tambah Laporan Monev</h3>
+      <form id="monevForm">
+        <input type="hidden" id="editId">
+        <div class="mb-3"><label class="block text-sm font-medium">Inovasi *</label><select id="inovasiSelect" required class="w-full border rounded-lg px-3 py-2"><option value="">Pilih Inovasi</option></select></div>
+        <div class="mb-3"><label class="block text-sm font-medium">Triwulan *</label><select id="triwulanSelect" required class="w-full border rounded-lg px-3 py-2"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+        <div class="mb-3"><label class="block text-sm font-medium">Status Monev *</label><select id="statusSelect" required class="w-full border rounded-lg px-3 py-2"><option>On Track</option><option>Perlu Perhatian</option><option>Tidak Berjalan</option></select></div>
+        <div class="mb-3"><label class="block text-sm font-medium">Skor Kualitas (0-100)</label><input type="number" id="skorKualitas" min="0" max="100" class="w-full border rounded-lg px-3 py-2"></div>
+        <div class="mb-3"><label class="block text-sm font-medium">Capaian / Kendala / Tindak Lanjut</label><textarea id="catatan" rows="2" class="w-full border rounded-lg px-3 py-2"></textarea></div>
+        <div class="flex justify-end gap-3"><button type="button" id="closeModalBtn" class="px-4 py-2 border rounded-lg">Batal</button><button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg">Simpan</button></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Data simulasi monev (laporan triwulan dari OPD)
+    let monevData = [
+      { id: 1, inovasi: "SIPAKATAU - Sistem Informasi Pendidikan", opd: "Dinas Pendidikan", triwulan: 1, status: "On Track", skorKualitas: 88, catatan: "Capaian baik, sosialisasi terus berjalan" },
+      { id: 2, inovasi: "SIPAKATAU - Sistem Informasi Pendidikan", opd: "Dinas Pendidikan", triwulan: 2, status: "On Track", skorKualitas: 90, catatan: "Indikator meningkat" },
+      { id: 3, inovasi: "Layanan Sehat Palopo (LSP)", opd: "Dinas Kesehatan", triwulan: 1, status: "On Track", skorKualitas: 92, catatan: "Pengguna aktif bertambah" },
+      { id: 4, inovasi: "Layanan Sehat Palopo (LSP)", opd: "Dinas Kesehatan", triwulan: 2, status: "Perlu Perhatian", skorKualitas: 75, catatan: "Kendala server, perlu peningkatan kapasitas" },
+      { id: 5, inovasi: "E-Tata Bangunan", opd: "DPUPR", triwulan: 1, status: "Tidak Berjalan", skorKualitas: 45, catatan: "Tidak ada update progress, tim tidak aktif" },
+      { id: 6, inovasi: "SIMLING Pengaduan", opd: "Diskominfo", triwulan: 1, status: "On Track", skorKualitas: 86, catatan: "Respons cepat, aduan terselesaikan" },
+      { id: 7, inovasi: "Palopo Satu Data", opd: "Bappeda", triwulan: 2, status: "Perlu Perhatian", skorKualitas: 68, catatan: "Integrasi data belum lengkap" }
+    ];
+
+    // Data survei kepuasan (per inovasi, dalam persen)
+    let satisfactionData = {
+      "SIPAKATAU - Sistem Informasi Pendidikan": 92,
+      "Layanan Sehat Palopo (LSP)": 88,
+      "E-Tata Bangunan": 65,
+      "SIMLING Pengaduan": 91,
+      "Palopo Satu Data": 79
+    };
+
+    // Data evaluasi eksternal
+    let externalEvals = [
+      { id: 1, title: "Kajian Dampak SIPAKATAU oleh Universitas Hasanuddin", date: "15 Mei 2026", fileUrl: "#" },
+      { id: 2, title: "Studi Efektivitas LSP - Litbang Palopo", date: "2 April 2026", fileUrl: "#" }
+    ];
+
+    // Daftar inovasi untuk dropdown (ambil unik dari monevData dan tambahan lain)
+    function getUniqueInovasi() {
+      const inovasiSet = new Set(monevData.map(m => m.inovasi));
+      return Array.from(inovasiSet);
+    }
+
+    // Simpan ke localStorage
+    function saveMonev() { localStorage.setItem('monev_data', JSON.stringify(monevData)); }
+    function saveExternal() { localStorage.setItem('external_evals', JSON.stringify(externalEvals)); }
+    function loadData() {
+      const storedMonev = localStorage.getItem('monev_data');
+      if (storedMonev) monevData = JSON.parse(storedMonev);
+      const storedEval = localStorage.getItem('external_evals');
+      if (storedEval) externalEvals = JSON.parse(storedEval);
+    }
+    loadData();
+
+    // Render tabel monev dengan filter
+    function renderMonevTable() {
+      const statusFilter = document.getElementById('statusFilter').value;
+      const triwulanFilter = document.getElementById('triwulanFilter').value;
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      let filtered = monevData.filter(item => {
+        if (statusFilter !== 'all' && item.status !== statusFilter) return false;
+        if (triwulanFilter !== 'all' && item.triwulan != triwulanFilter) return false;
+        if (search && !item.inovasi.toLowerCase().includes(search) && !item.opd.toLowerCase().includes(search)) return false;
+        return true;
+      });
+      const tbody = document.getElementById('monevTableBody');
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4 text-gray-400">Tidak ada data monev</td></tr>';
+      } else {
+        tbody.innerHTML = filtered.map(item => `
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-3 text-sm">${escapeHtml(item.inovasi)}</td>
+            <td class="px-4 py-3 text-sm">${escapeHtml(item.opd)}</td>
+            <td class="px-4 py-3 text-sm">Triwulan ${item.triwulan}</td>
+            <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs font-semibold ${item.status === 'On Track' ? 'bg-green-100 text-green-700' : item.status === 'Perlu Perhatian' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}">${item.status}</span></td>
+            <td class="px-4 py-3 text-sm">${item.skorKualitas || '-'}</td>
+            <td class="px-4 py-3 text-sm max-w-xs truncate">${item.catatan || '-'}</td>
+            <td class="px-4 py-3"><button onclick="editMonev(${item.id})" class="text-indigo-600 mr-2"><i class="fas fa-edit"></i></button><button onclick="deleteMonev(${item.id})" class="text-red-600"><i class="fas fa-trash"></i></button></td>
+          </tr>
+        `).join('');
+      }
+      updateStats();
+    }
+
+    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+    function updateStats() {
+      const onTrack = monevData.filter(i => i.status === "On Track").length;
+      const needAtt = monevData.filter(i => i.status === "Perlu Perhatian").length;
+      const notRun = monevData.filter(i => i.status === "Tidak Berjalan").length;
+      document.getElementById('onTrackCount').innerText = onTrack;
+      document.getElementById('needAttentionCount').innerText = needAtt;
+      document.getElementById('notRunningCount').innerText = notRun;
+      const satisfactionValues = Object.values(satisfactionData);
+      const avgSat = satisfactionValues.length ? (satisfactionValues.reduce((a,b)=>a+b,0)/satisfactionValues.length).toFixed(1) : 0;
+      document.getElementById('avgSatisfaction').innerText = avgSat + "%";
+    }
+
+    // Grafik kepuasan
+    let satChart = null;
+    function renderSatisfactionChart() {
+      const ctx = document.getElementById('satisfactionChart').getContext('2d');
+      if (satChart) satChart.destroy();
+      satChart = new Chart(ctx, {
+        type: 'bar',
+        data: { labels: Object.keys(satisfactionData), datasets: [{ label: 'Kepuasan (%)', data: Object.values(satisfactionData), backgroundColor: '#10b981' }] },
+        options: { responsive: true, maintainAspectRatio: true }
+      });
+    }
+
+    // Render evaluasi eksternal
+    function renderExternalEvals() {
+      const container = document.getElementById('externalEvalList');
+      if (externalEvals.length === 0) {
+        container.innerHTML = '<div class="text-gray-400 text-sm">Belum ada dokumen evaluasi eksternal.</div>';
+        return;
+      }
+      container.innerHTML = externalEvals.map(e => `
+        <div class="bg-gray-50 p-3 rounded-lg flex justify-between items-center">
+          <div><i class="fas fa-file-pdf text-red-500 mr-2"></i> <span class="text-sm">${escapeHtml(e.title)}</span><br><span class="text-xs text-gray-400">${e.date}</span></div>
+          <a href="${e.fileUrl}" class="text-indigo-600 text-sm"><i class="fas fa-download"></i> Unduh</a>
+        </div>
+      `).join('');
+    }
+
+    // Modal monev
+    const modal = document.getElementById('monevModal');
+    function populateInovasiSelect() {
+      const select = document.getElementById('inovasiSelect');
+      const inovasiList = getUniqueInovasi();
+      select.innerHTML = '<option value="">Pilih Inovasi</option>';
+      inovasiList.forEach(ino => {
+        const opd = monevData.find(m => m.inovasi === ino)?.opd || '';
+        select.innerHTML += `<option value="${ino}" data-opd="${opd}">${ino} (${opd})</option>`;
+      });
+    }
+    function openModal(editId = null) {
+      populateInovasiSelect();
+      if (editId) {
+        const item = monevData.find(m => m.id === editId);
+        if (item) {
+          document.getElementById('editId').value = item.id;
+          document.getElementById('inovasiSelect').value = item.inovasi;
+          document.getElementById('triwulanSelect').value = item.triwulan;
+          document.getElementById('statusSelect').value = item.status;
+          document.getElementById('skorKualitas').value = item.skorKualitas || '';
+          document.getElementById('catatan').value = item.catatan || '';
+          document.getElementById('modalTitle').innerText = 'Edit Laporan Monev';
+        }
+      } else {
+        document.getElementById('editId').value = '';
+        document.getElementById('monevForm').reset();
+        document.getElementById('modalTitle').innerText = 'Tambah Laporan Monev';
+      }
+      modal.style.display = 'flex';
+      modal.style.visibility = 'visible';
+    }
+    function closeModal() { modal.style.display = 'none'; modal.style.visibility = 'hidden'; }
+    document.getElementById('addMonevBtn').addEventListener('click', () => openModal(null));
+    document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+    window.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+    window.editMonev = (id) => openModal(id);
+    window.deleteMonev = (id) => {
+      if (confirm('Hapus laporan monev ini?')) {
+        monevData = monevData.filter(m => m.id !== id);
+        saveMonev();
+        renderMonevTable();
+      }
+    };
+
+    // Submit form monev
+    document.getElementById('monevForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('editId').value;
+      const inovasi = document.getElementById('inovasiSelect').value;
+      const triwulan = parseInt(document.getElementById('triwulanSelect').value);
+      const status = document.getElementById('statusSelect').value;
+      const skorKualitas = parseInt(document.getElementById('skorKualitas').value) || null;
+      const catatan = document.getElementById('catatan').value;
+      const opd = document.getElementById('inovasiSelect').selectedOptions[0]?.getAttribute('data-opd') || 'OPD Terkait';
+      if (!inovasi) return alert('Pilih inovasi');
+      if (id) {
+        const index = monevData.findIndex(m => m.id == id);
+        if (index !== -1) {
+          monevData[index] = { ...monevData[index], inovasi, opd, triwulan, status, skorKualitas, catatan };
+        }
+      } else {
+        const newId = Date.now();
+        monevData.push({ id: newId, inovasi, opd, triwulan, status, skorKualitas, catatan });
+      }
+      saveMonev();
+      renderMonevTable();
+      closeModal();
+    });
+
+    // Upload evaluasi eksternal
+    document.getElementById('uploadEvalBtn').addEventListener('click', () => {
+      const title = prompt('Masukkan judul kajian/penelitian eksternal:');
+      if (title) {
+        const newId = Date.now();
+        externalEvals.push({ id: newId, title: title, date: new Date().toLocaleDateString('id-ID'), fileUrl: '#' });
+        saveExternal();
+        renderExternalEvals();
+        alert('Dokumen evaluasi eksternal berhasil ditambahkan (simulasi).');
+      }
+    });
+
+    // Filter events
+    document.getElementById('statusFilter').addEventListener('change', renderMonevTable);
+    document.getElementById('triwulanFilter').addEventListener('change', renderMonevTable);
+    document.getElementById('searchInput').addEventListener('input', renderMonevTable);
+    document.getElementById('resetFilterBtn').addEventListener('click', () => {
+      document.getElementById('statusFilter').value = 'all';
+      document.getElementById('triwulanFilter').value = 'all';
+      document.getElementById('searchInput').value = '';
+      renderMonevTable();
+    });
+
+    // Ekspor CSV
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      let csv = "Inovasi,OPD,Triwulan,Status,Skor Kualitas,Catatan\n";
+      monevData.forEach(m => {
+        csv += `${m.inovasi},${m.opd},${m.triwulan},${m.status},${m.skorKualitas || ""},${(m.catatan || "").replace(/,/g,";")}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'monev_data.csv';
+      link.click();
+      URL.revokeObjectURL(link.href);
+    });
+
+    // Logout
+    function logout() { sessionStorage.removeItem('loggedInUser'); window.location.href = 'login.html'; }
+    document.getElementById('logoutLink').addEventListener('click', (e) => { e.preventDefault(); logout(); });
+    document.getElementById('sidebarLogout').addEventListener('click', (e) => { e.preventDefault(); logout(); });
+
+    // Profile dropdown
+    const profileBtn = document.getElementById('profileBtn');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    profileBtn.addEventListener('click', () => dropdownMenu.classList.toggle('hidden'));
+    document.addEventListener('click', (e) => { if (!profileBtn.contains(e.target)) dropdownMenu.classList.add('hidden'); });
+
+    // Set user name
+    const userData = sessionStorage.getItem('loggedInUser');
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        if (user.name) document.getElementById('userName').innerText = user.name;
+      } catch(e) {}
+    }
+
+    // Inisialisasi
+    renderMonevTable();
+    renderSatisfactionChart();
+    renderExternalEvals();
+  </script>
+</body>
+</html>
