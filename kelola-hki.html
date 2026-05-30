@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Kelola HKI | Admin Palopo Innovation Hub</title>
+  <!-- Tailwind + Font Awesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #f1f5f9; }
+    .modal-transition { transition: opacity 0.2s, visibility 0.2s; }
+    .expiring { background-color: #fef3c7; }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- Top Navigation -->
+  <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
+    <div class="px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <div class="bg-indigo-600 w-8 h-8 rounded-lg flex items-center justify-center">
+            <i class="fas fa-copyright text-white text-sm"></i>
+          </div>
+          <span class="font-bold text-gray-800 ml-2">Palopo Innovation Hub</span>
+          <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-0.5 rounded-full ml-3">Admin Panel</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <i class="fas fa-download text-gray-500 cursor-pointer hover:text-indigo-600" id="exportBtn" title="Ekspor Data HKI"></i>
+          <div class="relative">
+            <button id="profileBtn" class="flex items-center gap-2 focus:outline-none">
+              <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-800 font-bold text-sm">AD</div>
+              <span class="text-sm font-medium text-gray-700 hidden md:block" id="userName">Admin</span>
+              <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+            </button>
+            <div id="dropdownMenu" class="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border hidden z-30">
+              <a href="#" id="logoutLink" class="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Layout dengan Sidebar -->
+  <div class="flex">
+    <!-- Sidebar (desktop) -->
+    <aside class="w-64 bg-white border-r border-gray-200 min-h-screen hidden md:block">
+      <div class="p-4 space-y-1">
+        <a href="dashboard-admin.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-tachometer-alt w-5"></i> <span>Dashboard</span>
+        </a>
+        <a href="kelola-inovasi.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-lightbulb w-5"></i> <span>Kelola Inovasi</span>
+        </a>
+        <a href="indikator-spd.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-chart-simple w-5"></i> <span>Indikator SPD</span>
+        </a>
+        <a href="kelola-hki.html" class="flex items-center gap-3 px-3 py-2 text-indigo-600 bg-indigo-50 rounded-lg">
+          <i class="fas fa-copyright w-5"></i> <span>HKI & Fasilitasi</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-clipboard-list w-5"></i> <span>Monev & Evaluasi</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-flag-checkered w-5"></i> <span>Lomba Inovasi</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-users w-5"></i> <span>Manajemen OPD</span>
+        </a>
+        <a href="login.html" id="sidebarLogout" class="flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg mt-8">
+          <i class="fas fa-sign-out-alt w-5"></i> <span>Keluar</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8">
+      <!-- Header -->
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Fasilitasi Hak Kekayaan Intelektual (HKI)</h1>
+        <p class="text-gray-500 text-sm">Kelola pendaftaran HKI, insentif, bank HKI, dan notifikasi masa berlaku.</p>
+      </div>
+
+      <!-- Statistik Ringkas -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
+        <div class="bg-white rounded-xl shadow p-4 border-l-4 border-indigo-500">
+          <div class="text-gray-500 text-sm">Total HKI Terdaftar</div>
+          <div class="text-2xl font-bold" id="totalHki">0</div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4 border-l-4 border-yellow-500">
+          <div class="text-gray-500 text-sm">Masa Berlaku <60 hari</div>
+          <div class="text-2xl font-bold" id="expiringCount">0</div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4 border-l-4 border-green-500">
+          <div class="text-gray-500 text-sm">Insentif Tersalurkan</div>
+          <div class="text-2xl font-bold" id="insentifCount">0</div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4 border-l-4 border-blue-500">
+          <div class="text-gray-500 text-sm">Sosialisasi HKI</div>
+          <div class="text-2xl font-bold" id="sosialisasiCount">3</div>
+        </div>
+      </div>
+
+      <!-- Bank HKI (Daftar Inovasi dengan Sertifikat) -->
+      <div class="bg-white rounded-xl shadow overflow-hidden mb-6">
+        <div class="px-5 py-4 border-b flex justify-between items-center flex-wrap gap-2">
+          <h3 class="font-bold text-gray-700"><i class="fas fa-database mr-2 text-indigo-500"></i> Bank HKI - Inovasi Bersertifikat</h3>
+          <button id="addHkiBtn" class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-sm"><i class="fas fa-plus"></i> Daftarkan HKI Baru</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Inovasi</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">OPD / Pemilik</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Jenis HKI</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Nomor Pendaftaran</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Berlaku Sampai</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Insentif</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="hkiTableBody" class="divide-y divide-gray-100">
+              <!-- data dari JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Kegiatan Sosialisasi & Fasilitasi -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="bg-white rounded-xl shadow p-5">
+          <h3 class="font-bold text-gray-700 mb-3"><i class="fas fa-chalkboard-user text-blue-500"></i> Sosialisasi & Edukasi HKI</h3>
+          <ul class="space-y-2 text-sm">
+            <li class="flex justify-between items-center"><span><i class="fas fa-check-circle text-green-500"></i> Webinar HKI untuk Inovator (12 Mei 2026)</span> <button class="text-indigo-600 text-xs">Lihat Materi</button></li>
+            <li class="flex justify-between items-center"><span><i class="fas fa-check-circle text-green-500"></i> Pendampingan Pendaftaran Merek</span> <button class="text-indigo-600 text-xs">Jadwal</button></li>
+            <li class="flex justify-between items-center"><span><i class="fas fa-calendar-alt text-yellow-500"></i> Sosialisasi Hak Cipta (direncanakan 20 Juni 2026)</span> <button class="text-indigo-600 text-xs">Daftar</button></li>
+          </ul>
+          <button class="mt-3 text-indigo-600 text-sm w-full border border-indigo-200 rounded-lg py-1.5 hover:bg-indigo-50">+ Tambah Kegiatan Sosialisasi</button>
+        </div>
+        <div class="bg-white rounded-xl shadow p-5">
+          <h3 class="font-bold text-gray-700 mb-3"><i class="fas fa-hand-holding-usd text-green-500"></i> Pengajuan Insentif HKI</h3>
+          <div id="insentifList" class="space-y-2 max-h-48 overflow-y-auto">
+            <!-- daftar pengajuan insentif -->
+          </div>
+          <button id="ajukanInsentifBtn" class="mt-3 bg-green-600 text-white text-sm w-full rounded-lg py-1.5 hover:bg-green-700">+ Ajukan Insentif Baru</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Daftar HKI Baru -->
+  <div id="hkiModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm modal-transition">
+    <div class="bg-white rounded-2xl max-w-lg w-full mx-4 p-6">
+      <h3 class="text-xl font-bold mb-4">Daftarkan HKI Baru</h3>
+      <form id="hkiForm">
+        <div class="mb-3"><label class="block text-sm font-medium">Inovasi *</label><select id="inovasiSelect" required class="w-full border rounded-lg px-3 py-2"><option value="">Pilih Inovasi</option></select></div>
+        <div class="mb-3"><label class="block text-sm font-medium">Jenis HKI *</label><select id="jenisHki" required class="w-full border rounded-lg px-3 py-2"><option>Merek</option><option>Paten</option><option>Hak Cipta</option></select></div>
+        <div class="mb-3"><label class="block text-sm font-medium">Nomor Pendaftaran *</label><input type="text" id="nomorHki" required class="w-full border rounded-lg px-3 py-2"></div>
+        <div class="mb-3"><label class="block text-sm font-medium">Tanggal Berlaku (mulai)</label><input type="date" id="tglMulai" class="w-full border rounded-lg px-3 py-2"></div>
+        <div class="mb-3"><label class="block text-sm font-medium">Tanggal Habis Berlaku *</label><input type="date" id="tglHabis" required class="w-full border rounded-lg px-3 py-2"></div>
+        <div class="mb-3"><label class="block text-sm font-medium">File Sertifikat (URL atau upload simulasi)</label><input type="text" id="fileUrl" placeholder="https://..." class="w-full border rounded-lg px-3 py-2"></div>
+        <div class="flex justify-end gap-3"><button type="button" id="closeHkiModal" class="px-4 py-2 border rounded-lg">Batal</button><button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg">Simpan</button></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Insentif -->
+  <div id="insentifModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm modal-transition">
+    <div class="bg-white rounded-2xl max-w-md w-full mx-4 p-6">
+      <h3 class="text-xl font-bold mb-4">Pengajuan Insentif HKI</h3>
+      <form id="insentifForm">
+        <div class="mb-3"><label class="block text-sm font-medium">Inovasi (HKI terdaftar) *</label><select id="insentifInovasi" required class="w-full border rounded-lg px-3 py-2"></select></div>
+        <div class="mb-3"><label class="block text-sm font-medium">Jumlah Insentif (Rp)</label><input type="number" id="jumlahInsentif" class="w-full border rounded-lg px-3 py-2" placeholder="contoh: 5000000"></div>
+        <div class="mb-3"><label class="block text-sm font-medium">Keterangan</label><textarea id="keteranganInsentif" rows="2" class="w-full border rounded-lg px-3 py-2"></textarea></div>
+        <div class="flex justify-end gap-3"><button type="button" id="closeInsentifModal" class="px-4 py-2 border rounded-lg">Batal</button><button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg">Ajukan</button></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Data simulasi HKI (Bank HKI)
+    let hkiData = [
+      { id: 1, inovasi: "SIPAKATAU", opd: "Dinas Pendidikan", jenis: "Hak Cipta", nomor: "EC00202601234", tglMulai: "2024-01-10", tglHabis: "2034-01-10", fileUrl: "#", insentif: 5000000, statusInsentif: "Tersalurkan" },
+      { id: 2, inovasi: "Layanan Sehat Palopo", opd: "Dinas Kesehatan", jenis: "Merek", nomor: "IDM000123456", tglMulai: "2025-03-15", tglHabis: "2030-03-15", fileUrl: "#", insentif: 3000000, statusInsentif: "Tersalurkan" },
+      { id: 3, inovasi: "E-Tata Bangunan", opd: "DPUPR", jenis: "Paten", nomor: "P0020240789", tglMulai: "2024-06-20", tglHabis: "2044-06-20", fileUrl: "#", insentif: null, statusInsentif: "Belum" },
+      { id: 4, inovasi: "SIMLING", opd: "Diskominfo", jenis: "Hak Cipta", nomor: "EC0020260999", tglMulai: "2025-11-01", tglHabis: "2035-11-01", fileUrl: "#", insentif: 2000000, statusInsentif: "Proses" }
+    ];
+
+    // Data inovasi untuk dropdown (yang belum punya HKI atau bisa ditambahkan)
+    let daftarInovasi = [
+      { id: 101, nama: "GoDisabilitas", opd: "Dinas Sosial" },
+      { id: 102, nama: "Bank Sampah ASRI", opd: "DLH" },
+      { id: 103, nama: "Palopo Satu Data", opd: "Bappeda" }
+    ];
+
+    // Simpan ke localStorage
+    function saveHki() { localStorage.setItem('hki_data', JSON.stringify(hkiData)); }
+    function loadHki() {
+      const stored = localStorage.getItem('hki_data');
+      if (stored) hkiData = JSON.parse(stored);
+      else saveHki();
+    }
+    loadHki();
+
+    // Render tabel HKI
+    function renderHkiTable() {
+      const tbody = document.getElementById('hkiTableBody');
+      const today = new Date();
+      let expiring = 0;
+      let totalInsentif = 0;
+      tbody.innerHTML = hkiData.map(hki => {
+        const habis = new Date(hki.tglHabis);
+        const diffDays = Math.ceil((habis - today) / (1000 * 60 * 60 * 24));
+        const isExpiring = diffDays < 60 && diffDays > 0;
+        if (isExpiring) expiring++;
+        if (hki.insentif && hki.statusInsentif === 'Tersalurkan') totalInsentif += hki.insentif;
+        return `
+          <tr class="${isExpiring ? 'expiring' : ''} hover:bg-gray-50">
+            <td class="px-4 py-3 text-sm">${hki.inovasi}</td>
+            <td class="px-4 py-3 text-sm">${hki.opd}</td>
+            <td class="px-4 py-3 text-sm">${hki.jenis}</td>
+            <td class="px-4 py-3 text-sm font-mono">${hki.nomor}</td>
+            <td class="px-4 py-3 text-sm ${isExpiring ? 'text-red-600 font-semibold' : ''}">${hki.tglHabis} ${isExpiring ? `(${diffDays} hari)` : ''}</td>
+            <td class="px-4 py-3 text-sm">${hki.insentif ? 'Rp ' + hki.insentif.toLocaleString() : '-'}<br><span class="text-xs ${hki.statusInsentif === 'Tersalurkan' ? 'text-green-600' : 'text-yellow-600'}">${hki.statusInsentif}</span></td>
+            <td class="px-4 py-3"><button onclick="editHki(${hki.id})" class="text-indigo-600 mr-2"><i class="fas fa-edit"></i></button><button onclick="deleteHki(${hki.id})" class="text-red-600"><i class="fas fa-trash"></i></button></td>
+          </table>
+        `;
+      }).join('');
+      document.getElementById('totalHki').innerText = hkiData.length;
+      document.getElementById('expiringCount').innerText = expiring;
+      document.getElementById('insentifCount').innerText = (totalInsentif / 1000000).toFixed(1) + 'jt';
+    }
+
+    // Populate dropdown inovasi untuk pendaftaran HKI baru
+    function populateInovasiSelect() {
+      const select = document.getElementById('inovasiSelect');
+      select.innerHTML = '<option value="">Pilih Inovasi</option>';
+      [...daftarInovasi, ...hkiData.map(h => ({ id: h.id, nama: h.inovasi, opd: h.opd }))].forEach(ino => {
+        select.innerHTML += `<option value="${ino.nama}" data-opd="${ino.opd}">${ino.nama} (${ino.opd})</option>`;
+      });
+    }
+
+    // Modal HKI
+    const hkiModal = document.getElementById('hkiModal');
+    function openHkiModal() { hkiModal.style.display = 'flex'; hkiModal.style.visibility = 'visible'; populateInovasiSelect(); }
+    function closeHkiModal() { hkiModal.style.display = 'none'; hkiModal.style.visibility = 'hidden'; }
+    document.getElementById('addHkiBtn').addEventListener('click', openHkiModal);
+    document.getElementById('closeHkiModal').addEventListener('click', closeHkiModal);
+    window.addEventListener('click', (e) => { if (e.target === hkiModal) closeHkiModal(); });
+
+    // Simpan HKI baru
+    document.getElementById('hkiForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const inovasi = document.getElementById('inovasiSelect').value;
+      const jenis = document.getElementById('jenisHki').value;
+      const nomor = document.getElementById('nomorHki').value.trim();
+      const tglMulai = document.getElementById('tglMulai').value;
+      const tglHabis = document.getElementById('tglHabis').value;
+      const fileUrl = document.getElementById('fileUrl').value.trim() || '#';
+      if (!inovasi || !nomor || !tglHabis) return alert('Harap isi semua kolom wajib');
+      const opd = document.getElementById('inovasiSelect').selectedOptions[0]?.getAttribute('data-opd') || 'OPD Terkait';
+      const newId = Date.now();
+      hkiData.push({ id: newId, inovasi, opd, jenis, nomor, tglMulai, tglHabis, fileUrl, insentif: null, statusInsentif: 'Belum' });
+      saveHki();
+      renderHkiTable();
+      closeHkiModal();
+      document.getElementById('hkiForm').reset();
+      alert('HKI berhasil didaftarkan.');
+    });
+
+    // Edit HKI (simulasi sederhana)
+    window.editHki = (id) => {
+      const hki = hkiData.find(h => h.id === id);
+      if (!hki) return;
+      // Untuk demo, kita cukup prompt edit nomor dan tanggal habis
+      const newNomor = prompt('Edit Nomor Pendaftaran:', hki.nomor);
+      if (newNomor) hki.nomor = newNomor;
+      const newTglHabis = prompt('Edit Tanggal Habis Berlaku (YYYY-MM-DD):', hki.tglHabis);
+      if (newTglHabis) hki.tglHabis = newTglHabis;
+      saveHki();
+      renderHkiTable();
+    };
+    window.deleteHki = (id) => {
+      if (confirm('Hapus data HKI ini?')) {
+        hkiData = hkiData.filter(h => h.id !== id);
+        saveHki();
+        renderHkiTable();
+      }
+    };
+
+    // Insentif
+    const insentifModal = document.getElementById('insentifModal');
+    function openInsentifModal() {
+      const select = document.getElementById('insentifInovasi');
+      select.innerHTML = '<option value="">Pilih Inovasi dengan HKI</option>';
+      hkiData.forEach(h => {
+        if (h.insentif === null || h.statusInsentif !== 'Tersalurkan') {
+          select.innerHTML += `<option value="${h.id}">${h.inovasi} (${h.jenis}) - ${h.nomor}</option>`;
+        }
+      });
+      insentifModal.style.display = 'flex';
+      insentifModal.style.visibility = 'visible';
+    }
+    function closeInsentifModal() { insentifModal.style.display = 'none'; insentifModal.style.visibility = 'hidden'; }
+    document.getElementById('ajukanInsentifBtn').addEventListener('click', openInsentifModal);
+    document.getElementById('closeInsentifModal').addEventListener('click', closeInsentifModal);
+    window.addEventListener('click', (e) => { if (e.target === insentifModal) closeInsentifModal(); });
+
+    document.getElementById('insentifForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const hkiId = parseInt(document.getElementById('insentifInovasi').value);
+      const jumlah = parseInt(document.getElementById('jumlahInsentif').value);
+      const keterangan = document.getElementById('keteranganInsentif').value;
+      const hki = hkiData.find(h => h.id === hkiId);
+      if (hki && jumlah > 0) {
+        hki.insentif = jumlah;
+        hki.statusInsentif = 'Tersalurkan';
+        saveHki();
+        renderHkiTable();
+        closeInsentifModal();
+        alert(`Insentif Rp ${jumlah.toLocaleString()} untuk ${hki.inovasi} berhasil diajukan.`);
+      } else {
+        alert('Pilih inovasi yang valid dan masukkan nominal.');
+      }
+    });
+
+    // Daftar insentif (riwayat)
+    function renderInsentifList() {
+      const container = document.getElementById('insentifList');
+      const insentifRiwayat = hkiData.filter(h => h.insentif);
+      if (insentifRiwayat.length === 0) {
+        container.innerHTML = '<div class="text-gray-400 text-sm">Belum ada pengajuan insentif.</div>';
+        return;
+      }
+      container.innerHTML = insentifRiwayat.map(h => `
+        <div class="bg-gray-50 p-2 rounded flex justify-between text-sm">
+          <div><span class="font-medium">${h.inovasi}</span><br><span class="text-xs">Rp ${h.insentif.toLocaleString()}</span></div>
+          <span class="text-green-600 text-xs">${h.statusInsentif}</span>
+        </div>
+      `).join('');
+    }
+
+    // Ekspor CSV
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      let csv = "Inovasi,OPD,Jenis HKI,Nomor Pendaftaran,Tanggal Habis,Insentif,Status Insentif\n";
+      hkiData.forEach(h => {
+        csv += `${h.inovasi},${h.opd},${h.jenis},${h.nomor},${h.tglHabis},${h.insentif || ""},${h.statusInsentif}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'bank_hki.csv';
+      link.click();
+      URL.revokeObjectURL(link.href);
+    });
+
+    // Logout
+    function logout() { sessionStorage.removeItem('loggedInUser'); window.location.href = 'login.html'; }
+    document.getElementById('logoutLink').addEventListener('click', (e) => { e.preventDefault(); logout(); });
+    document.getElementById('sidebarLogout').addEventListener('click', (e) => { e.preventDefault(); logout(); });
+
+    // Profile dropdown
+    const profileBtn = document.getElementById('profileBtn');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    profileBtn.addEventListener('click', () => dropdownMenu.classList.toggle('hidden'));
+    document.addEventListener('click', (e) => { if (!profileBtn.contains(e.target)) dropdownMenu.classList.add('hidden'); });
+
+    // Set user name
+    const userData = sessionStorage.getItem('loggedInUser');
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        if (user.name) document.getElementById('userName').innerText = user.name;
+      } catch(e) {}
+    }
+
+    renderHkiTable();
+    renderInsentifList();
+  </script>
+</body>
+</html>
