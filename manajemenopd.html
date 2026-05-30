@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Manajemen OPD | Admin Palopo Innovation Hub</title>
+  <!-- Tailwind + Font Awesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #f1f5f9; }
+    .modal-transition { transition: opacity 0.2s, visibility 0.2s; }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- Top Navigation -->
+  <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
+    <div class="px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <div class="bg-indigo-600 w-8 h-8 rounded-lg flex items-center justify-center">
+            <i class="fas fa-users text-white text-sm"></i>
+          </div>
+          <span class="font-bold text-gray-800 ml-2">Palopo Innovation Hub</span>
+          <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-0.5 rounded-full ml-3">Admin Panel</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <i class="fas fa-download text-gray-500 cursor-pointer hover:text-indigo-600" id="exportBtn" title="Ekspor Data OPD"></i>
+          <div class="relative">
+            <button id="profileBtn" class="flex items-center gap-2 focus:outline-none">
+              <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-800 font-bold text-sm">AD</div>
+              <span class="text-sm font-medium text-gray-700 hidden md:block" id="userName">Admin</span>
+              <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+            </button>
+            <div id="dropdownMenu" class="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border hidden z-30">
+              <a href="#" id="logoutLink" class="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Layout dengan Sidebar -->
+  <div class="flex">
+    <!-- Sidebar (desktop) -->
+    <aside class="w-64 bg-white border-r border-gray-200 min-h-screen hidden md:block">
+      <div class="p-4 space-y-1">
+        <a href="dashboard-admin.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-tachometer-alt w-5"></i> <span>Dashboard</span>
+        </a>
+        <a href="kelola-inovasi.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-lightbulb w-5"></i> <span>Kelola Inovasi</span>
+        </a>
+        <a href="indikator-spd.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-chart-simple w-5"></i> <span>Indikator SPD</span>
+        </a>
+        <a href="kelola-hki.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-copyright w-5"></i> <span>HKI & Fasilitasi</span>
+        </a>
+        <a href="kelola-monev.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-clipboard-list w-5"></i> <span>Monev & Evaluasi</span>
+        </a>
+        <a href="kelola-lomba.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-flag-checkered w-5"></i> <span>Lomba Inovasi</span>
+        </a>
+        <a href="manajemen-opd.html" class="flex items-center gap-3 px-3 py-2 text-indigo-600 bg-indigo-50 rounded-lg">
+          <i class="fas fa-building w-5"></i> <span>Manajemen OPD</span>
+        </a>
+        <a href="login.html" id="sidebarLogout" class="flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg mt-8">
+          <i class="fas fa-sign-out-alt w-5"></i> <span>Keluar</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8">
+      <!-- Header -->
+      <div class="mb-6 flex flex-wrap justify-between items-center">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800">Manajemen Perangkat Daerah (OPD)</h1>
+          <p class="text-gray-500 text-sm">Kelola data OPD, lihat jumlah inovasi, dan atur status keaktifan.</p>
+        </div>
+        <button id="addOpdBtn" class="mt-2 sm:mt-0 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow">
+          <i class="fas fa-plus mr-1"></i> Tambah OPD Baru
+        </button>
+      </div>
+
+      <!-- Statistik Ringkas -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-6">
+        <div class="bg-white rounded-xl shadow p-4 border-l-4 border-indigo-500">
+          <div class="text-gray-500 text-sm">Total OPD</div>
+          <div class="text-2xl font-bold" id="totalOpd">0</div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4 border-l-4 border-green-500">
+          <div class="text-gray-500 text-sm">Total Inovasi (semua OPD)</div>
+          <div class="text-2xl font-bold" id="totalInovasiOpd">0</div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-4 border-l-4 border-blue-500">
+          <div class="text-gray-500 text-sm">OPD Aktif</div>
+          <div class="text-2xl font-bold" id="opdAktifCount">0</div>
+        </div>
+      </div>
+
+      <!-- Filter & Pencarian -->
+      <div class="bg-white rounded-xl shadow p-4 mb-6 flex flex-wrap gap-3 items-center justify-between">
+        <div class="flex flex-wrap gap-3">
+          <select id="statusFilter" class="border rounded-lg px-3 py-1.5 text-sm">
+            <option value="all">Semua Status</option>
+            <option value="Aktif">Aktif</option>
+            <option value="Tidak Aktif">Tidak Aktif</option>
+          </select>
+          <input type="text" id="searchInput" placeholder="Cari Nama OPD / Singkatan..." class="border rounded-lg px-3 py-1.5 text-sm w-64">
+          <button id="resetFilterBtn" class="text-indigo-600 text-sm"><i class="fas fa-undo-alt"></i> Reset</button>
+        </div>
+      </div>
+
+      <!-- Tabel OPD -->
+      <div class="bg-white rounded-xl shadow overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Nama OPD</th>
+                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Singkatan</th>
+                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Alamat</th>
+                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Jumlah Inovasi</th>
+                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Status</th>
+                <th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="opdTableBody" class="divide-y divide-gray-100">
+              <!-- data dari JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Tambah / Edit OPD -->
+  <div id="opdModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm modal-transition">
+    <div class="bg-white rounded-2xl max-w-lg w-full mx-4 p-6">
+      <h3 class="text-xl font-bold mb-4" id="modalOpdTitle">Tambah OPD Baru</h3>
+      <form id="opdForm">
+        <input type="hidden" id="editOpdId">
+        <div class="mb-3"><label class="block text-sm font-medium">Nama OPD *</label><input type="text" id="namaOpd" required class="w-full border rounded-lg px-3 py-2"></div>
+        <div class="mb-3"><label class="block text-sm font-medium">Singkatan *</label><input type="text" id="singkatanOpd" required class="w-full border rounded-lg px-3 py-2"></div>
+        <div class="mb-3"><label class="block text-sm font-medium">Alamat</label><textarea id="alamatOpd" rows="2" class="w-full border rounded-lg px-3 py-2"></textarea></div>
+        <div class="mb-3"><label class="block text-sm font-medium">Status</label><select id="statusOpd" class="w-full border rounded-lg px-3 py-2"><option>Aktif</option><option>Tidak Aktif</option></select></div>
+        <div class="flex justify-end gap-3"><button type="button" id="closeOpdModal" class="px-4 py-2 border rounded-lg">Batal</button><button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg">Simpan</button></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Reset Password / Akses OPD -->
+  <div id="resetModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm modal-transition">
+    <div class="bg-white rounded-2xl max-w-md w-full mx-4 p-6">
+      <h3 class="text-xl font-bold mb-4" id="resetModalTitle">Reset Akun OPD</h3>
+      <p class="text-sm text-gray-600 mb-3" id="resetOpdName">Mereset password untuk:</p>
+      <div class="mb-3"><label class="block text-sm font-medium">Password Baru</label><input type="password" id="newPassword" class="w-full border rounded-lg px-3 py-2" placeholder="Masukkan password baru"></div>
+      <div class="flex justify-end gap-3"><button type="button" id="closeResetModal" class="px-4 py-2 border rounded-lg">Batal</button><button id="confirmResetBtn" class="bg-yellow-600 text-white px-4 py-2 rounded-lg">Reset Password</button></div>
+    </div>
+  </div>
+
+  <script>
+    // Data OPD (simulasi, terintegrasi dengan data inovasi dari kelola-inovasi)
+    let opdData = [
+      { id: 1, nama: "Dinas Pendidikan", singkatan: "Disdik", alamat: "Jl. Andi Djemma No. 10", status: "Aktif" },
+      { id: 2, nama: "Dinas Kesehatan", singkatan: "Dinkes", alamat: "Jl. Veteran No. 5", status: "Aktif" },
+      { id: 3, nama: "Dinas Pekerjaan Umum dan Penataan Ruang", singkatan: "DPUPR", alamat: "Jl. Sawerigading", status: "Aktif" },
+      { id: 4, nama: "Dinas Sosial", singkatan: "Dinsos", alamat: "Jl. Pongsimpin", status: "Aktif" },
+      { id: 5, nama: "Dinas Komunikasi dan Informatika", singkatan: "Diskominfo", alamat: "Jl. Merdeka", status: "Aktif" },
+      { id: 6, nama: "Bappeda", singkatan: "Bappeda", alamat: "Jl. A. Pettarani", status: "Aktif" },
+      { id: 7, nama: "Dinas Lingkungan Hidup", singkatan: "DLH", alamat: "Jl. Bau Massepe", status: "Tidak Aktif" }
+    ];
+
+    // Data inovasi (ambil dari localStorage atau default, untuk menghitung jumlah per OPD)
+    let inovasiData = [];
+    function loadInovasiData() {
+      const stored = localStorage.getItem('inovasi_data_admin');
+      if (stored) {
+        inovasiData = JSON.parse(stored);
+      } else {
+        // Default data inovasi (sama dengan di kelola-inovasi)
+        inovasiData = [
+          { id: 1, nama: "SIPAKATAU - Sistem Informasi Pendidikan", opd: "Dinas Pendidikan", status: "Terverifikasi" },
+          { id: 2, nama: "Layanan Sehat Palopo (LSP)", opd: "Dinas Kesehatan", status: "Terverifikasi" },
+          { id: 3, nama: "E-Tata Bangunan", opd: "DPUPR", status: "Terverifikasi" },
+          { id: 4, nama: "GoDisabilitas", opd: "Dinas Sosial", status: "Menunggu" },
+          { id: 5, nama: "Bank Sampah Digital ASRI", opd: "DLH", status: "Menunggu" },
+          { id: 6, nama: "SIMLING Pengaduan", opd: "Diskominfo", status: "Terverifikasi" },
+          { id: 7, nama: "Palopo Satu Data", opd: "Bappeda", status: "Terverifikasi" }
+        ];
+      }
+    }
+
+    // Simpan OPD ke localStorage
+    function saveOpd() { localStorage.setItem('opd_data', JSON.stringify(opdData)); }
+    function loadOpd() {
+      const stored = localStorage.getItem('opd_data');
+      if (stored) opdData = JSON.parse(stored);
+      else saveOpd();
+    }
+
+    // Hitung jumlah inovasi per OPD (berdasarkan nama OPD)
+    function getInovasiCount(opdNama) {
+      return inovasiData.filter(ino => ino.opd === opdNama).length;
+    }
+
+    // Render tabel OPD
+    let currentFiltered = [];
+    function renderOpdTable() {
+      const statusFilter = document.getElementById('statusFilter').value;
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      currentFiltered = opdData.filter(opd => {
+        if (statusFilter !== 'all' && opd.status !== statusFilter) return false;
+        if (search && !opd.nama.toLowerCase().includes(search) && !opd.singkatan.toLowerCase().includes(search)) return false;
+        return true;
+      });
+      const tbody = document.getElementById('opdTableBody');
+      if (currentFiltered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-gray-400">Tidak ada data OPD</td></tr>';
+      } else {
+        tbody.innerHTML = currentFiltered.map(opd => {
+          const inovasiCount = getInovasiCount(opd.nama);
+          return `
+            <tr class="hover:bg-gray-50">
+              <td class="px-5 py-3 text-sm font-medium">${escapeHtml(opd.nama)}</td>
+              <td class="px-5 py-3 text-sm">${escapeHtml(opd.singkatan)}</td>
+              <td class="px-5 py-3 text-sm">${escapeHtml(opd.alamat || '-')}</td>
+              <td class="px-5 py-3 text-sm font-semibold text-indigo-600">${inovasiCount}</td>
+              <td class="px-5 py-3"><span class="px-2 py-1 rounded-full text-xs ${opd.status === 'Aktif' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${opd.status}</span></td>
+              <td class="px-5 py-3">
+                <button onclick="editOpd(${opd.id})" class="text-blue-600 hover:text-blue-800 mr-2" title="Edit"><i class="fas fa-edit"></i></button>
+                <button onclick="resetPassword(${opd.id})" class="text-yellow-600 hover:text-yellow-800 mr-2" title="Reset Password"><i class="fas fa-key"></i></button>
+                <button onclick="deleteOpd(${opd.id})" class="text-red-600 hover:text-red-800" title="Hapus"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+      updateStats();
+    }
+
+    function updateStats() {
+      document.getElementById('totalOpd').innerText = opdData.length;
+      const totalInovasi = opdData.reduce((sum, opd) => sum + getInovasiCount(opd.nama), 0);
+      document.getElementById('totalInovasiOpd').innerText = totalInovasi;
+      const aktifCount = opdData.filter(opd => opd.status === 'Aktif').length;
+      document.getElementById('opdAktifCount').innerText = aktifCount;
+    }
+
+    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+    // Modal OPD
+    const opdModal = document.getElementById('opdModal');
+    function openOpdModal(editId = null) {
+      if (editId) {
+        const opd = opdData.find(o => o.id === editId);
+        if (opd) {
+          document.getElementById('editOpdId').value = opd.id;
+          document.getElementById('namaOpd').value = opd.nama;
+          document.getElementById('singkatanOpd').value = opd.singkatan;
+          document.getElementById('alamatOpd').value = opd.alamat || '';
+          document.getElementById('statusOpd').value = opd.status;
+          document.getElementById('modalOpdTitle').innerText = 'Edit OPD';
+        }
+      } else {
+        document.getElementById('editOpdId').value = '';
+        document.getElementById('opdForm').reset();
+        document.getElementById('modalOpdTitle').innerText = 'Tambah OPD Baru';
+      }
+      opdModal.style.display = 'flex';
+      opdModal.style.visibility = 'visible';
+    }
+    function closeOpdModal() { opdModal.style.display = 'none'; opdModal.style.visibility = 'hidden'; }
+    document.getElementById('addOpdBtn').addEventListener('click', () => openOpdModal(null));
+    document.getElementById('closeOpdModal').addEventListener('click', closeOpdModal);
+    window.addEventListener('click', (e) => { if (e.target === opdModal) closeOpdModal(); });
+
+    window.editOpd = (id) => openOpdModal(id);
+
+    window.deleteOpd = (id) => {
+      if (confirm('Hapus OPD ini? Data inovasi yang terkait tidak akan hilang, tetapi OPD tidak akan muncul lagi di daftar.')) {
+        opdData = opdData.filter(o => o.id !== id);
+        saveOpd();
+        renderOpdTable();
+      }
+    };
+
+    // Submit form OPD
+    document.getElementById('opdForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('editOpdId').value;
+      const nama = document.getElementById('namaOpd').value.trim();
+      const singkatan = document.getElementById('singkatanOpd').value.trim();
+      const alamat = document.getElementById('alamatOpd').value;
+      const status = document.getElementById('statusOpd').value;
+      if (!nama || !singkatan) return alert('Nama dan singkatan OPD wajib diisi');
+      if (id) {
+        const index = opdData.findIndex(o => o.id == id);
+        if (index !== -1) {
+          opdData[index] = { ...opdData[index], nama, singkatan, alamat, status };
+        }
+      } else {
+        const newId = Date.now();
+        opdData.push({ id: newId, nama, singkatan, alamat, status });
+      }
+      saveOpd();
+      renderOpdTable();
+      closeOpdModal();
+    });
+
+    // Reset Password Modal
+    const resetModal = document.getElementById('resetModal');
+    let resetOpdId = null;
+    window.resetPassword = (id) => {
+      const opd = opdData.find(o => o.id === id);
+      if (opd) {
+        resetOpdId = id;
+        document.getElementById('resetOpdName').innerHTML = `Mereset password untuk: <strong>${escapeHtml(opd.nama)} (${escapeHtml(opd.singkatan)})</strong>`;
+        document.getElementById('newPassword').value = '';
+        resetModal.style.display = 'flex';
+        resetModal.style.visibility = 'visible';
+      }
+    };
+    function closeResetModal() { resetModal.style.display = 'none'; resetModal.style.visibility = 'hidden'; }
+    document.getElementById('closeResetModal').addEventListener('click', closeResetModal);
+    document.getElementById('confirmResetBtn').addEventListener('click', () => {
+      const newPass = document.getElementById('newPassword').value.trim();
+      if (!newPass) {
+        alert('Masukkan password baru');
+        return;
+      }
+      // Simulasi reset password (biasanya disimpan di database user)
+      alert(`Password untuk OPD ID ${resetOpdId} telah direset menjadi: ${newPass}. (Simulasi - terintegrasi dengan akun user)`);
+      closeResetModal();
+    });
+    window.addEventListener('click', (e) => { if (e.target === resetModal) closeResetModal(); });
+
+    // Filter events
+    document.getElementById('statusFilter').addEventListener('change', renderOpdTable);
+    document.getElementById('searchInput').addEventListener('input', renderOpdTable);
+    document.getElementById('resetFilterBtn').addEventListener('click', () => {
+      document.getElementById('statusFilter').value = 'all';
+      document.getElementById('searchInput').value = '';
+      renderOpdTable();
+    });
+
+    // Ekspor CSV
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      let csv = "Nama OPD,Singkatan,Alamat,Jumlah Inovasi,Status\n";
+      opdData.forEach(opd => {
+        csv += `${opd.nama},${opd.singkatan},${opd.alamat || ""},${getInovasiCount(opd.nama)},${opd.status}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'manajemen_opd.csv';
+      link.click();
+      URL.revokeObjectURL(link.href);
+    });
+
+    // Logout
+    function logout() { sessionStorage.removeItem('loggedInUser'); window.location.href = 'login.html'; }
+    document.getElementById('logoutLink').addEventListener('click', (e) => { e.preventDefault(); logout(); });
+    document.getElementById('sidebarLogout').addEventListener('click', (e) => { e.preventDefault(); logout(); });
+
+    // Profile dropdown
+    const profileBtn = document.getElementById('profileBtn');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    profileBtn.addEventListener('click', () => dropdownMenu.classList.toggle('hidden'));
+    document.addEventListener('click', (e) => { if (!profileBtn.contains(e.target)) dropdownMenu.classList.add('hidden'); });
+
+    // Set user name
+    const userData = sessionStorage.getItem('loggedInUser');
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        if (user.name) document.getElementById('userName').innerText = user.name;
+      } catch(e) {}
+    }
+
+    loadOpd();
+    loadInovasiData();
+    renderOpdTable();
+  </script>
+</body>
+</html>
