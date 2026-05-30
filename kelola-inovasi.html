@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Kelola Inovasi | Admin Palopo Innovation Hub</title>
+  <!-- Tailwind CSS + Font Awesome + Leaflet (untuk koordinat) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #f1f5f9; }
+    .modal-transition { transition: opacity 0.2s, visibility 0.2s; }
+    #mapKoordinat { height: 200px; border-radius: 8px; margin-top: 4px; }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- Top Navigation (sama seperti sebelumnya) -->
+  <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
+    <div class="px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <div class="bg-indigo-600 w-8 h-8 rounded-lg flex items-center justify-center">
+            <i class="fas fa-lightbulb text-white text-sm"></i>
+          </div>
+          <span class="font-bold text-gray-800 ml-2">Palopo Innovation Hub</span>
+          <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-0.5 rounded-full ml-3">Admin Panel</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <i class="fas fa-download text-gray-500 cursor-pointer hover:text-indigo-600" id="exportBtn" title="Ekspor Data Inovasi"></i>
+          <div class="relative">
+            <button id="profileBtn" class="flex items-center gap-2 focus:outline-none">
+              <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-800 font-bold text-sm">AD</div>
+              <span class="text-sm font-medium text-gray-700 hidden md:block" id="userName">Admin</span>
+              <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+            </button>
+            <div id="dropdownMenu" class="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border hidden z-30">
+              <a href="#" id="logoutLink" class="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Layout dengan Sidebar -->
+  <div class="flex">
+    <aside class="w-64 bg-white border-r border-gray-200 min-h-screen hidden md:block">
+      <div class="p-4 space-y-1">
+        <a href="dashboard-admin.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg"><i class="fas fa-tachometer-alt w-5"></i> <span>Dashboard</span></a>
+        <a href="kelola-inovasi.html" class="flex items-center gap-3 px-3 py-2 text-indigo-600 bg-indigo-50 rounded-lg"><i class="fas fa-lightbulb w-5"></i> <span>Kelola Inovasi</span></a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg"><i class="fas fa-chart-simple w-5"></i> <span>Indikator SPD</span></a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg"><i class="fas fa-copyright w-5"></i> <span>HKI & Fasilitasi</span></a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg"><i class="fas fa-clipboard-list w-5"></i> <span>Monev & Evaluasi</span></a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg"><i class="fas fa-flag-checkered w-5"></i> <span>Lomba Inovasi</span></a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg"><i class="fas fa-users w-5"></i> <span>Manajemen OPD</span></a>
+        <a href="login.html" id="sidebarLogout" class="flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg mt-8"><i class="fas fa-sign-out-alt w-5"></i> <span>Keluar</span></a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8">
+      <div class="mb-6 flex flex-wrap justify-between items-center">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800">Kelola Inovasi Daerah</h1>
+          <p class="text-gray-500 text-sm">Validasi, edit, atau hapus inovasi yang diinput oleh OPD dan masyarakat.</p>
+        </div>
+        <button id="addInovasiBtn" class="mt-2 sm:mt-0 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow"><i class="fas fa-plus mr-1"></i> Tambah Inovasi Manual</button>
+      </div>
+
+      <!-- Filter & Pencarian + Total Inovasi -->
+      <div class="bg-white rounded-xl shadow p-4 mb-6 flex flex-wrap gap-3 items-center justify-between">
+        <div class="flex flex-wrap gap-3">
+          <select id="statusFilter" class="border rounded-lg px-3 py-1.5 text-sm">
+            <option value="all">Semua Status</option>
+            <option value="Menunggu">Menunggu Validasi</option>
+            <option value="Terverifikasi">Terverifikasi</option>
+            <option value="Ditolak">Ditolak</option>
+          </select>
+          <select id="opdFilter" class="border rounded-lg px-3 py-1.5 text-sm">
+            <option value="all">Semua OPD</option>
+          </select>
+          <input type="text" id="searchInput" placeholder="Cari inovasi / OPD..." class="border rounded-lg px-3 py-1.5 text-sm w-64">
+          <button id="resetFilterBtn" class="text-indigo-600 text-sm"><i class="fas fa-undo-alt"></i> Reset</button>
+        </div>
+        <div class="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Total: <span id="totalCount" class="font-bold text-indigo-600">0</span> inovasi</div>
+      </div>
+
+      <!-- Tabel Inovasi -->
+      <div class="bg-white rounded-xl shadow overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Nama Inovasi</th><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">OPD / Pengusul</th><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Jenis</th><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Tanggal Input</th><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Status</th><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Aksi</th></tr>
+            </thead>
+            <tbody id="inovasiTableBody" class="divide-y divide-gray-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Detail & Validasi (sama seperti sebelumnya) -->
+  <div id="detailModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm modal-transition">
+    <div class="bg-white rounded-2xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center"><h3 class="text-xl font-bold text-slate-800" id="modalTitle">Detail Inovasi</h3><button id="closeModalBtn" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button></div>
+      <div id="modalContent" class="p-6 space-y-4"></div>
+      <div class="border-t px-6 py-4 flex justify-end gap-3" id="modalActions"></div>
+    </div>
+  </div>
+
+  <!-- Modal Edit / Tambah Inovasi (Lengkap sesuai IGA) -->
+  <div id="editModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm modal-transition">
+    <div class="bg-white rounded-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center"><h3 class="text-xl font-bold text-slate-800" id="editModalTitle">Tambah/Edit Inovasi</h3><button id="closeEditModalBtn" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button></div>
+      <form id="editForm" class="p-6 space-y-4">
+        <input type="hidden" id="editId">
+        
+        <!-- Data Dasar -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div><label class="block text-sm font-medium text-gray-700">Nama Inovasi *</label><input type="text" id="editNama" required class="w-full border rounded-lg px-3 py-2"></div>
+          <div><label class="block text-sm font-medium text-gray-700">OPD / Pengusul *</label><input type="text" id="editOpd" required class="w-full border rounded-lg px-3 py-2"></div>
+          <div><label class="block text-sm font-medium text-gray-700">Tahapan Inovasi *</label><select id="editTahapan" class="w-full border rounded-lg px-3 py-2"><option>Inisiatif</option><option>Uji Coba</option><option>Penerapan</option></select></div>
+          <div><label class="block text-sm font-medium text-gray-700">Inisiator</label><select id="editInisiator" class="w-full border rounded-lg px-3 py-2"><option>Kepala Daerah</option><option>DPRD</option><option>ASN</option><option>OPD</option><option>Masyarakat</option></select></div>
+          <div><label class="block text-sm font-medium text-gray-700">Klasifikasi Inovasi</label><select id="editKlasifikasi" class="w-full border rounded-lg px-3 py-2"><option>Inovasi Perangkat Daerah</option><option>Inovasi Desa</option><option>Inovasi Masyarakat</option></select></div>
+          <div><label class="block text-sm font-medium text-gray-700">Jenis Inovasi</label><select id="editJenis" class="w-full border rounded-lg px-3 py-2"><option>Digital</option><option>Non Digital</option></select></div>
+          <div><label class="block text-sm font-medium text-gray-700">Bentuk Inovasi</label><select id="editBentuk" class="w-full border rounded-lg px-3 py-2"><option>Tata Kelola</option><option>Pelayanan Publik</option><option>Lainnya</option></select></div>
+          <div><label class="block text-sm font-medium text-gray-700">Inovasi Tematik</label><select id="editTematik" class="w-full border rounded-lg px-3 py-2"><option>Non Tematik</option><option>Asta Cita 1</option><option>Asta Cita 2</option><option>Asta Cita 3</option><option>Asta Cita 4</option><option>Asta Cita 5</option><option>Asta Cita 6</option><option>Asta Cita 7</option><option>Asta Cita 8</option></select></div>
+          <div><label class="block text-sm font-medium text-gray-700">Urusan Utama</label><input type="text" id="editUrusan" class="w-full border rounded-lg px-3 py-2"></div>
+        </div>
+
+        <!-- Waktu -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div><label class="block text-sm font-medium text-gray-700">Waktu Uji Coba</label><input type="date" id="editWaktuUjiCoba" class="w-full border rounded-lg px-3 py-2"></div>
+          <div><label class="block text-sm font-medium text-gray-700">Waktu Penerapan Awal</label><input type="date" id="editWaktuPenerapan" class="w-full border rounded-lg px-3 py-2"></div>
+          <div><label class="block text-sm font-medium text-gray-700">Waktu Pengembangan Terbaru</label><input type="date" id="editWaktuPengembangan" class="w-full border rounded-lg px-3 py-2"></div>
+        </div>
+
+        <!-- Titik Koordinat dengan peta sederhana -->
+        <div><label class="block text-sm font-medium text-gray-700">Titik Koordinat (Lat, Lng)</label><input type="text" id="editKoordinat" placeholder="-2.9925, 120.1969" class="w-full border rounded-lg px-3 py-2"><div id="mapKoordinat" style="height:200px;"></div></div>
+
+        <!-- Narasi -->
+        <div><label class="block text-sm font-medium text-gray-700">Rancang Bangun (min 300 kata) *</label><textarea id="editRancangBangun" rows="4" class="w-full border rounded-lg px-3 py-2"></textarea><span class="text-xs text-gray-400" id="rancangCount">0 kata</span></div>
+        <div><label class="block text-sm font-medium text-gray-700">Tujuan Inovasi</label><textarea id="editTujuan" rows="2" class="w-full border rounded-lg px-3 py-2"></textarea></div>
+        <div><label class="block text-sm font-medium text-gray-700">Manfaat Inovasi</label><textarea id="editManfaat" rows="2" class="w-full border rounded-lg px-3 py-2"></textarea></div>
+        <div><label class="block text-sm font-medium text-gray-700">Hasil Inovasi (Output)</label><textarea id="editHasil" rows="2" class="w-full border rounded-lg px-3 py-2"></textarea></div>
+
+        <!-- Upload File (simulasi) -->
+        <div class="border-t pt-4 mt-2"><h4 class="font-semibold">Dokumen Pendukung (Unggah File)</h4></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div><label class="block text-sm">Anggaran (opsional)</label><input type="file" id="editAnggaran" accept=".pdf,.jpg,.png" class="w-full border rounded-lg px-2 py-1"></div>
+          <div><label class="block text-sm">Profil Bisnis (opsional)</label><input type="file" id="editProfilBisnis" accept=".pdf" class="w-full border rounded-lg px-2 py-1"></div>
+          <div><label class="block text-sm">Sertifikat HAKI</label><input type="file" id="editHaki" accept=".pdf" class="w-full border rounded-lg px-2 py-1"></div>
+          <div><label class="block text-sm">Penghargaan</label><input type="file" id="editPenghargaan" accept=".pdf,.jpg" class="w-full border rounded-lg px-2 py-1"></div>
+          <div><label class="block text-sm">Foto Inovasi (min 1)</label><input type="file" id="editFoto" accept="image/*" multiple class="w-full border rounded-lg px-2 py-1"></div>
+          <div><label class="block text-sm">Video Inovasi (max 5 menit)</label><input type="file" id="editVideo" accept="video/mp4" class="w-full border rounded-lg px-2 py-1"></div>
+        </div>
+
+        <!-- Data Dukung SID & Pilihan Parameter -->
+        <div class="border-t pt-4 mt-2"><h4 class="font-semibold">Data Dukung Indikator SID & Parameter Penilaian</h4></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="sidParameters">
+          <!-- Dinamis oleh JS (20 indikator SID) -->
+        </div>
+
+        <!-- Status -->
+        <div><label class="block text-sm font-medium text-gray-700">Status *</label><select id="editStatus" class="w-full border rounded-lg px-3 py-2"><option>Menunggu</option><option>Terverifikasi</option><option>Ditolak</option></select></div>
+        <div class="flex justify-end gap-3"><button type="button" id="cancelEditBtn" class="px-4 py-2 border rounded-lg">Batal</button><button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg">Simpan</button></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Data inovasi dimulai kosong
+    let inovasiData = [];
+
+    // Daftar indikator SID (20 indikator) beserta parameter 1-3 (skor 1,2,3)
+    const sidIndikatorList = [
+      "Regulasi Inovasi Daerah", "Ketersediaan SDM", "Dukungan anggaran", "Alat Kerja", "Bimtek inovasi",
+      "Integrasi Program Dalam RKPD", "Keterlibatan aktor inovasi", "Pelaksana inovasi daerah", "Jejaring inovasi",
+      "Sosialisasi Inovasi Daerah", "Pedoman teknis", "Kemudahan informasi layanan", "Kemudahan proses inovasi",
+      "Penyelesaian layanan pengaduan", "Layanan Terintegrasi", "Replikasi", "Kecepatan penciptaan inovasi",
+      "Kemanfaatan inovasi", "Monitoring dan Evaluasi", "Kualitas inovasi daerah"
+    ];
+
+    // Fungsi untuk generate form parameter SID
+    function generateSidParametersForm(existingData = {}) {
+      const container = document.getElementById('sidParameters');
+      container.innerHTML = '';
+      sidIndikatorList.forEach((ind, idx) => {
+        const saved = existingData[ind] || { parameter: 1, file: null };
+        container.innerHTML += `
+          <div class="border rounded-lg p-2 bg-gray-50">
+            <label class="block text-sm font-medium">${ind}</label>
+            <select class="sid-param-select w-full border rounded mt-1 text-sm" data-indikator="${ind}">
+              <option value="1" ${saved.parameter == 1 ? 'selected' : ''}>Parameter 1 (Skor dasar)</option>
+              <option value="2" ${saved.parameter == 2 ? 'selected' : ''}>Parameter 2 (Skor menengah)</option>
+              <option value="3" ${saved.parameter == 3 ? 'selected' : ''}>Parameter 3 (Skor tinggi)</option>
+            </select>
+            <input type="file" class="sid-file-input w-full text-sm mt-1" data-indikator="${ind}" accept=".pdf,.jpg,.png">
+            ${saved.file ? `<div class="text-xs text-green-600 mt-1">File terupload: ${saved.file.name}</div>` : ''}
+          </div>
+        `;
+      });
+    }
+
+    // Simpan data SID parameter dari form ke object
+    function collectSidData() {
+      let sidData = {};
+      document.querySelectorAll('.sid-param-select').forEach(select => {
+        const ind = select.getAttribute('data-indikator');
+        sidData[ind] = { parameter: parseInt(select.value), file: null };
+      });
+      document.querySelectorAll('.sid-file-input').forEach(input => {
+        const ind = input.getAttribute('data-indikator');
+        if (input.files.length > 0) {
+          sidData[ind].file = input.files[0];
+        } else if (sidData[ind] && !sidData[ind].file) {
+          sidData[ind].file = null;
+        }
+      });
+      return sidData;
+    }
+
+    // Fungsi untuk mengisi form edit dengan data inovasi yang ada
+    function populateFormWithData(inovasi) {
+      document.getElementById('editId').value = inovasi.id || '';
+      document.getElementById('editNama').value = inovasi.nama || '';
+      document.getElementById('editOpd').value = inovasi.opd || '';
+      document.getElementById('editTahapan').value = inovasi.tahapan || 'Penerapan';
+      document.getElementById('editInisiator').value = inovasi.inisiator || 'OPD';
+      document.getElementById('editKlasifikasi').value = inovasi.klasifikasi || 'Inovasi Perangkat Daerah';
+      document.getElementById('editJenis').value = inovasi.jenis || 'Digital';
+      document.getElementById('editBentuk').value = inovasi.bentuk || 'Pelayanan Publik';
+      document.getElementById('editTematik').value = inovasi.tematik || 'Non Tematik';
+      document.getElementById('editUrusan').value = inovasi.urusan || '';
+      document.getElementById('editWaktuUjiCoba').value = inovasi.waktuUjiCoba || '';
+      document.getElementById('editWaktuPenerapan').value = inovasi.waktuPenerapan || '';
+      document.getElementById('editWaktuPengembangan').value = inovasi.waktuPengembangan || '';
+      document.getElementById('editKoordinat').value = inovasi.koordinat || '';
+      document.getElementById('editRancangBangun').value = inovasi.rancangBangun || '';
+      document.getElementById('editTujuan').value = inovasi.tujuan || '';
+      document.getElementById('editManfaat').value = inovasi.manfaat || '';
+      document.getElementById('editHasil').value = inovasi.hasil || '';
+      document.getElementById('editStatus').value = inovasi.status || 'Menunggu';
+      // Reset file inputs (tidak bisa diisi otomatis karena keamanan)
+      document.getElementById('editAnggaran').value = '';
+      document.getElementById('editProfilBisnis').value = '';
+      document.getElementById('editHaki').value = '';
+      document.getElementById('editPenghargaan').value = '';
+      document.getElementById('editFoto').value = '';
+      document.getElementById('editVideo').value = '';
+      generateSidParametersForm(inovasi.sidData || {});
+      // Refresh peta koordinat
+      if (window.map) window.map.remove();
+      initMap(document.getElementById('editKoordinat').value);
+    }
+
+    // Peta koordinat
+    let map;
+    function initMap(coordStr) {
+      let lat = -2.9925, lng = 120.1969;
+      if (coordStr && coordStr.includes(',')) {
+        let parts = coordStr.split(',');
+        lat = parseFloat(parts[0]); lng = parseFloat(parts[1]);
+        if (isNaN(lat)) lat = -2.9925;
+        if (isNaN(lng)) lng = 120.1969;
+      }
+      map = L.map('mapKoordinat').setView([lat, lng], 13);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OSM' }).addTo(map);
+      let marker = L.marker([lat, lng]).addTo(map);
+      map.on('click', function(e) {
+        document.getElementById('editKoordinat').value = e.latlng.lat.toFixed(6) + ', ' + e.latlng.lng.toFixed(6);
+        marker.setLatLng(e.latlng);
+      });
+    }
+
+    // Hitung kata rancang bangun
+    document.getElementById('editRancangBangun').addEventListener('input', function() {
+      let words = this.value.trim().split(/\s+/).length;
+      document.getElementById('rancangCount').innerText = words + ' kata' + (words < 300 ? ' (minimal 300 kata)' : ' (cukup)');
+    });
+
+    // Populate filter OPD dari data inovasi
+    function populateOpdFilter() {
+      const opdSet = new Set(inovasiData.map(i => i.opd));
+      const select = document.getElementById('opdFilter');
+      select.innerHTML = '<option value="all">Semua OPD</option>';
+      Array.from(opdSet).sort().forEach(opd => { select.innerHTML += `<option value="${opd}">${opd}</option>`; });
+    }
+
+    // Render tabel inovasi
+    function renderTable() {
+      const statusFilter = document.getElementById('statusFilter').value;
+      const opdFilter = document.getElementById('opdFilter').value;
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      let filtered = inovasiData.filter(item => {
+        if (statusFilter !== 'all' && item.status !== statusFilter) return false;
+        if (opdFilter !== 'all' && item.opd !== opdFilter) return false;
+        if (search && !item.nama.toLowerCase().includes(search) && !item.opd.toLowerCase().includes(search)) return false;
+        return true;
+      });
+      document.getElementById('totalCount').innerText = filtered.length;
+      const tbody = document.getElementById('inovasiTableBody');
+      if (filtered.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-gray-400">Tidak ada inovasi</td></tr>'; return; }
+      tbody.innerHTML = filtered.map(item => `
+        <tr class="hover:bg-gray-50">
+          <td class="px-5 py-3 text-sm font-medium">${escapeHtml(item.nama)}</td>
+          <td class="px-5 py-3 text-sm">${escapeHtml(item.opd)}</td>
+          <td class="px-5 py-3 text-sm">${item.jenis}</td>
+          <td class="px-5 py-3 text-sm">${item.tglInput || '-'}</td>
+          <td class="px-5 py-3"><span class="px-2 py-1 rounded-full text-xs font-semibold ${item.status === 'Terverifikasi' ? 'bg-green-100 text-green-700' : item.status === 'Menunggu' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}">${item.status}</span></td>
+          <td class="px-5 py-3"><button onclick="viewDetail(${item.id})" class="text-indigo-600 hover:text-indigo-800 mr-2"><i class="fas fa-eye"></i></button><button onclick="editInovasi(${item.id})" class="text-blue-600 hover:text-blue-800 mr-2"><i class="fas fa-edit"></i></button><button onclick="deleteInovasi(${item.id})" class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button></td>
+        </tr>
+      `).join('');
+    }
+    function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+    // Detail
+    window.viewDetail = (id) => {
+      const inovasi = inovasiData.find(i => i.id === id);
+      if (!inovasi) return;
+      document.getElementById('modalTitle').innerText = inovasi.nama;
+      let sidHtml = '<div class="font-semibold mt-2">Parameter SID:</div><div class="grid grid-cols-2 gap-1 text-xs">';
+      if (inovasi.sidData) {
+        for (let [key, val] of Object.entries(inovasi.sidData)) {
+          sidHtml += `<div>${key}:</div><div>Parameter ${val.parameter}${val.file ? ' (file)' : ''}</div>`;
+        }
+      } else { sidHtml += '<div colspan="2">Belum diisi</div>'; }
+      sidHtml += '</div>';
+      document.getElementById('modalContent').innerHTML = `
+        <div class="grid grid-cols-2 gap-3 text-sm"><div class="font-semibold">OPD:</div><div>${escapeHtml(inovasi.opd)}</div><div class="font-semibold">Jenis:</div><div>${inovasi.jenis}</div><div class="font-semibold">Bentuk:</div><div>${inovasi.bentuk}</div><div class="font-semibold">Urusan:</div><div>${inovasi.urusan || '-'}</div><div class="font-semibold">Tahapan:</div><div>${inovasi.tahapan || '-'}</div><div class="font-semibold">Koordinat:</div><div>${inovasi.koordinat || '-'}</div><div class="font-semibold">Rancang Bangun:</div><div class="col-span-1">${(inovasi.rancangBangun || '').substring(0,200)}...</div></div>${sidHtml}
+        <div class="font-semibold">Tujuan:</div><p class="text-gray-700">${inovasi.tujuan || '-'}</p><div class="font-semibold">Manfaat:</div><p>${inovasi.manfaat || '-'}</p><div class="font-semibold">Hasil:</div><p>${inovasi.hasil || '-'}</p>
+      `;
+      const actionsDiv = document.getElementById('modalActions');
+      if (inovasi.status === 'Menunggu') {
+        actionsDiv.innerHTML = `<button onclick="validateInovasi(${inovasi.id}, true)" class="bg-green-600 text-white px-4 py-2 rounded-lg"><i class="fas fa-check"></i> Setujui & Verifikasi</button><button onclick="validateInovasi(${inovasi.id}, false)" class="bg-red-600 text-white px-4 py-2 rounded-lg"><i class="fas fa-times"></i> Tolak</button><button onclick="closeDetailModal()" class="px-4 py-2 border rounded-lg">Tutup</button>`;
+      } else { actionsDiv.innerHTML = `<button onclick="closeDetailModal()" class="px-4 py-2 border rounded-lg">Tutup</button>`; }
+      document.getElementById('detailModal').style.display = 'flex';
+      document.getElementById('detailModal').style.visibility = 'visible';
+    };
+    window.validateInovasi = (id, setujui) => {
+      const inovasi = inovasiData.find(i => i.id === id);
+      if (inovasi) { inovasi.status = setujui ? 'Terverifikasi' : 'Ditolak'; renderTable(); closeDetailModal(); alert(`Inovasi ${setujui ? 'diverifikasi' : 'ditolak'}.`); }
+    };
+    window.deleteInovasi = (id) => { if (confirm('Hapus inovasi ini?')) { inovasiData = inovasiData.filter(i => i.id !== id); renderTable(); populateOpdFilter(); alert('Terhapus.'); } };
+    window.editInovasi = (id) => {
+      const inovasi = inovasiData.find(i => i.id === id);
+      if (inovasi) { populateFormWithData(inovasi); document.getElementById('editModalTitle').innerText = 'Edit Inovasi'; document.getElementById('editModal').style.display = 'flex'; document.getElementById('editModal').style.visibility = 'visible'; }
+    };
+
+    // Simpan data (tambah/edit)
+    document.getElementById('editForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = document.getElementById('editId').value;
+      const sidData = collectSidData();
+      const newInovasi = {
+        id: id ? parseInt(id) : Date.now(),
+        nama: document.getElementById('editNama').value.trim(),
+        opd: document.getElementById('editOpd').value.trim(),
+        tahapan: document.getElementById('editTahapan').value,
+        inisiator: document.getElementById('editInisiator').value,
+        klasifikasi: document.getElementById('editKlasifikasi').value,
+        jenis: document.getElementById('editJenis').value,
+        bentuk: document.getElementById('editBentuk').value,
+        tematik: document.getElementById('editTematik').value,
+        urusan: document.getElementById('editUrusan').value,
+        waktuUjiCoba: document.getElementById('editWaktuUjiCoba').value,
+        waktuPenerapan: document.getElementById('editWaktuPenerapan').value,
+        waktuPengembangan: document.getElementById('editWaktuPengembangan').value,
+        koordinat: document.getElementById('editKoordinat').value,
+        rancangBangun: document.getElementById('editRancangBangun').value,
+        tujuan: document.getElementById('editTujuan').value,
+        manfaat: document.getElementById('editManfaat').value,
+        hasil: document.getElementById('editHasil').value,
+        status: document.getElementById('editStatus').value,
+        tglInput: new Date().toISOString().slice(0,10),
+        sidData: sidData
+      };
+      if (!newInovasi.nama || !newInovasi.opd) return alert('Nama dan OPD wajib diisi');
+      if (newInovasi.rancangBangun.trim().split(/\s+/).length < 300) return alert('Rancang bangun minimal 300 kata');
+      if (id) {
+        const index = inovasiData.findIndex(i => i.id == id);
+        if (index !== -1) inovasiData[index] = { ...inovasiData[index], ...newInovasi };
+      } else {
+        inovasiData.push(newInovasi);
+      }
+      renderTable(); populateOpdFilter(); closeEditModal(); alert('Data tersimpan.');
+    });
+
+    function closeDetailModal() { document.getElementById('detailModal').style.display = 'none'; document.getElementById('detailModal').style.visibility = 'hidden'; }
+    function closeEditModal() { document.getElementById('editModal').style.display = 'none'; document.getElementById('editModal').style.visibility = 'hidden'; }
+    document.getElementById('addInovasiBtn').addEventListener('click', () => {
+      document.getElementById('editId').value = '';
+      document.getElementById('editForm').reset();
+      generateSidParametersForm({});
+      initMap('');
+      document.getElementById('editModalTitle').innerText = 'Tambah Inovasi Baru';
+      document.getElementById('editModal').style.display = 'flex';
+      document.getElementById('editModal').style.visibility = 'visible';
+    });
+    document.getElementById('closeModalBtn').addEventListener('click', closeDetailModal);
+    document.getElementById('closeEditModalBtn').addEventListener('click', closeEditModal);
+    document.getElementById('cancelEditBtn').addEventListener('click', closeEditModal);
+    window.addEventListener('click', (e) => { if (e.target === document.getElementById('detailModal')) closeDetailModal(); if (e.target === document.getElementById('editModal')) closeEditModal(); });
+    document.getElementById('statusFilter').addEventListener('change', renderTable);
+    document.getElementById('opdFilter').addEventListener('change', renderTable);
+    document.getElementById('searchInput').addEventListener('input', renderTable);
+    document.getElementById('resetFilterBtn').addEventListener('click', () => { document.getElementById('statusFilter').value = 'all'; document.getElementById('opdFilter').value = 'all'; document.getElementById('searchInput').value = ''; renderTable(); });
+    document.getElementById('exportBtn').addEventListener('click', () => { let csv = "ID,Nama,OPD,Jenis,Status\n"; inovasiData.forEach(i => { csv += `${i.id},${i.nama},${i.opd},${i.jenis},${i.status}\n`; }); const blob = new Blob([csv], { type: 'text/csv' }); const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'inovasi_data.csv'; link.click(); URL.revokeObjectURL(link.href); });
+    function logout() { sessionStorage.removeItem('loggedInUser'); window.location.href = 'login.html'; }
+    document.getElementById('logoutLink').addEventListener('click', (e) => { e.preventDefault(); logout(); });
+    document.getElementById('sidebarLogout').addEventListener('click', (e) => { e.preventDefault(); logout(); });
+    const profileBtn = document.getElementById('profileBtn'), dropdownMenu = document.getElementById('dropdownMenu');
+    profileBtn.addEventListener('click', () => dropdownMenu.classList.toggle('hidden'));
+    document.addEventListener('click', (e) => { if (!profileBtn.contains(e.target)) dropdownMenu.classList.add('hidden'); });
+    const userData = sessionStorage.getItem('loggedInUser'); if (userData) { try { const user = JSON.parse(userData); if (user.name) document.getElementById('userName').innerText = user.name; } catch(e) {} }
+    populateOpdFilter(); renderTable();
+  </script>
+</body>
+</html>
