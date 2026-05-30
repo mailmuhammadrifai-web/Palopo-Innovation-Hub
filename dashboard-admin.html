@@ -21,7 +21,7 @@
 </head>
 <body class="antialiased">
 
-  <!-- Top Navigation -->
+  <!-- Top Navigation dengan Dropdown Profil -->
   <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
     <div class="px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
@@ -36,13 +36,18 @@
         </div>
         <div class="flex items-center gap-4">
           <div class="relative">
-            <i class="fas fa-bell text-gray-500 cursor-pointer"></i>
-            <span class="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">3</span>
+            <i class="fas fa-bell text-gray-500 cursor-pointer" id="notifIcon"></i>
+            <span class="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" id="notifBadge">0</span>
           </div>
-          <div class="flex items-center gap-2">
-            <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-800 font-bold text-sm">AD</div>
-            <span class="text-sm font-medium text-gray-700 hidden md:block" id="userName">Admin</span>
-            <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+          <div class="relative">
+            <button id="profileBtn" class="flex items-center gap-2 focus:outline-none">
+              <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-800 font-bold text-sm">AD</div>
+              <span class="text-sm font-medium text-gray-700 hidden md:block" id="userName">Admin</span>
+              <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+            </button>
+            <div id="dropdownMenu" class="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border hidden z-30">
+              <a href="#" id="logoutLink" class="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+            </div>
           </div>
         </div>
       </div>
@@ -74,7 +79,7 @@
         <a href="manajemenopd.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
           <i class="fas fa-users w-5"></i> <span>Manajemen OPD</span>
         </a>
-        <a href="login.html" class="flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg mt-8">
+        <a href="login.html" id="sidebarLogout" class="flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg mt-8">
           <i class="fas fa-sign-out-alt w-5"></i> <span>Keluar</span>
         </a>
       </div>
@@ -91,8 +96,8 @@
         </div>
         <div class="mt-2 sm:mt-0 bg-white rounded-xl shadow-sm px-4 py-2 border">
           <span class="text-xs text-gray-500">Indeks IID Saat Ini</span>
-          <div class="text-2xl font-bold text-indigo-700" id="iidValue">67.2</div>
-          <span class="text-xs text-green-600"><i class="fas fa-arrow-up"></i> +3.2 dari bulan lalu</span>
+          <div class="text-2xl font-bold text-indigo-700" id="iidValue">--</div>
+          <span class="text-xs text-green-600" id="iidTrend"><i class="fas fa-chart-line"></i> Loading...</span>
         </div>
       </div>
 
@@ -100,62 +105,56 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-indigo-500 card-hover">
           <div class="flex justify-between"><span class="text-gray-500 text-sm">Total Inovasi</span><i class="fas fa-chart-line text-indigo-400"></i></div>
-          <div class="text-3xl font-bold mt-2" id="totalInovasi">187</div>
+          <div class="text-3xl font-bold mt-2" id="totalInovasi">0</div>
           <div class="text-xs text-gray-400 mt-1">Target minimal nasional: 12</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-green-500 card-hover">
           <div class="flex justify-between"><span class="text-gray-500 text-sm">Terverifikasi</span><i class="fas fa-check-circle text-green-400"></i></div>
-          <div class="text-3xl font-bold mt-2" id="verifiedCount">156</div>
-          <div class="text-xs text-gray-400">Menunggu validasi: 12</div>
+          <div class="text-3xl font-bold mt-2" id="verifiedCount">0</div>
+          <div class="text-xs text-gray-400" id="pendingInfo">Menunggu validasi: 0</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-yellow-500 card-hover">
           <div class="flex justify-between"><span class="text-gray-500 text-sm">OPD Aktif</span><i class="fas fa-building text-yellow-400"></i></div>
-          <div class="text-3xl font-bold mt-2" id="opdAktif">24</div>
-          <div class="text-xs text-gray-400">Dari 32 OPD total</div>
+          <div class="text-3xl font-bold mt-2" id="opdAktif">0</div>
+          <div class="text-xs text-gray-400" id="totalOpdInfo">Dari 0 OPD total</div>
         </div>
         <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-purple-500 card-hover">
           <div class="flex justify-between"><span class="text-gray-500 text-sm">HKI Terdaftar</span><i class="fas fa-copyright text-purple-400"></i></div>
-          <div class="text-3xl font-bold mt-2" id="hkiCount">8</div>
+          <div class="text-3xl font-bold mt-2" id="hkiCount">0</div>
           <div class="text-xs text-gray-400">Merek, paten, hak cipta</div>
         </div>
       </div>
 
       <!-- Chart & Peta Sebaran -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <!-- Grafik Tren Inovasi -->
         <div class="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
           <h3 class="font-semibold text-gray-700 mb-3"><i class="fas fa-chart-bar text-indigo-500 mr-2"></i> Tren Inovasi per Tahun</h3>
           <canvas id="trendChart" height="200"></canvas>
         </div>
-        <!-- Peta Sebaran Inovasi (Ringkasan) -->
         <div class="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
           <h3 class="font-semibold text-gray-700 mb-3"><i class="fas fa-map-marker-alt text-red-500 mr-2"></i> Peta Sebaran Inovasi (Preview)</h3>
           <div id="mapPreview" style="height: 220px; border-radius: 12px;" class="z-0"></div>
-          <div class="text-xs text-gray-400 mt-2 text-center"><i class="fas fa-info-circle"></i> 11 titik implementasi inovasi di wilayah Palopo</div>
+          <div class="text-xs text-gray-400 mt-2 text-center"><i class="fas fa-info-circle"></i> <span id="mapCount">0</span> titik implementasi inovasi di wilayah Palopo</div>
         </div>
       </div>
 
       <!-- Top 3 Inovasi Bulanan & Monev Status -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <!-- Top 3 Inovasi -->
         <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-5 border border-gray-100">
           <div class="flex justify-between items-center mb-3">
             <h3 class="font-semibold text-gray-700"><i class="fas fa-trophy text-yellow-500 mr-2"></i> 3 Inovasi Terbaik Bulan Ini</h3>
             <span class="text-xs bg-gray-100 px-2 py-1 rounded">Berdasarkan kualitas & kemanfaatan</span>
           </div>
-          <div id="top3Container" class="space-y-3">
-            <!-- dinamis -->
-          </div>
+          <div id="top3Container" class="space-y-3">Loading...</div>
         </div>
-        <!-- Status Monev -->
         <div class="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
           <h3 class="font-semibold text-gray-700 mb-3"><i class="fas fa-clipboard-check text-blue-500 mr-2"></i> Status Monev Triwulan</h3>
           <div class="space-y-3">
-            <div><div class="flex justify-between text-sm"><span>On Track</span><span class="font-bold text-green-600" id="onTrackCount">18</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-green-500 h-2 rounded-full" style="width: 60%"></div></div></div>
-            <div><div class="flex justify-between text-sm"><span>Perlu Perhatian</span><span class="font-bold text-yellow-600" id="needAttentionCount">7</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-yellow-500 h-2 rounded-full" style="width: 23%"></div></div></div>
-            <div><div class="flex justify-between text-sm"><span>Tidak Berjalan</span><span class="font-bold text-red-600" id="notRunningCount">5</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-red-500 h-2 rounded-full" style="width: 17%"></div></div></div>
+            <div><div class="flex justify-between text-sm"><span>On Track</span><span class="font-bold text-green-600" id="onTrackCount">0</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div id="onTrackBar" class="bg-green-500 h-2 rounded-full" style="width:0%"></div></div></div>
+            <div><div class="flex justify-between text-sm"><span>Perlu Perhatian</span><span class="font-bold text-yellow-600" id="needAttentionCount">0</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div id="needBar" class="bg-yellow-500 h-2 rounded-full" style="width:0%"></div></div></div>
+            <div><div class="flex justify-between text-sm"><span>Tidak Berjalan</span><span class="font-bold text-red-600" id="notRunningCount">0</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div id="notBar" class="bg-red-500 h-2 rounded-full" style="width:0%"></div></div></div>
           </div>
-          <button class="mt-4 w-full text-indigo-600 text-sm border border-indigo-200 py-1.5 rounded-lg hover:bg-indigo-50 transition">Lihat Detail Monev</button>
+          <a href="kelola-monev.html" class="mt-4 w-full block text-center text-indigo-600 text-sm border border-indigo-200 py-1.5 rounded-lg hover:bg-indigo-50 transition">Lihat Detail Monev</a>
         </div>
       </div>
 
@@ -163,88 +162,245 @@
       <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="px-5 py-4 border-b flex justify-between items-center">
           <h3 class="font-semibold text-gray-700"><i class="fas fa-clock mr-2 text-orange-500"></i> Inovasi Menunggu Validasi</h3>
-          <button class="text-indigo-600 text-sm hover:underline">Validasi Massal</button>
+          <a href="kelola-inovasi.html?filter=Menunggu" class="text-indigo-600 text-sm hover:underline">Validasi Massal</a>
         </div>
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Nama Inovasi</th><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">OPD</th><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Tanggal Input</th><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Status</th><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Aksi</th></tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100" id="pendingTable">
-              <!-- baris dinamis -->
-            </tbody>
+            <thead class="bg-gray-50"><tr><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Nama Inovasi</th><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">OPD</th><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Tanggal Input</th><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Status</th><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Aksi</th></tr></thead>
+            <tbody class="divide-y divide-gray-100" id="pendingTable"></tbody>
           </table>
         </div>
       </div>
-
     </main>
   </div>
 
   <script>
-    // Data dummy untuk admin dashboard
-    const totalInovasi = 187;
-    const verifiedCount = 156;
-    const pendingCount = totalInovasi - verifiedCount;
-    const opdAktif = 24;
-    const hkiCount = 8;
+    // Global data references (diambil dari localStorage)
+    let inovasiData = [];
+    let opdData = [];
+    let hkiData = [];
+    let monevData = [];
 
-    document.getElementById('totalInovasi').innerText = totalInovasi;
-    document.getElementById('verifiedCount').innerText = verifiedCount;
-    document.getElementById('opdAktif').innerText = opdAktif;
-    document.getElementById('hkiCount').innerText = hkiCount;
+    // Helper untuk mengambil data dari localStorage (sinkron dengan modul lain)
+    function loadAllData() {
+      // Inovasi dari kelola-inovasi (key: 'inovasi_data_admin' atau dari localStorage lain)
+      const storedInovasi = localStorage.getItem('inovasi_data_admin');
+      if (storedInovasi) inovasiData = JSON.parse(storedInovasi);
+      else {
+        // Data contoh default agar tidak kosong
+        inovasiData = [
+          { id: 1, nama: "SIPAKATAU - Sistem Informasi Pendidikan", opd: "Dinas Pendidikan", jenis: "Digital", status: "Terverifikasi", tglInput: "2026-02-10", koordinat: "-2.9925,120.1969", sidData: { "Kualitas inovasi daerah": { parameter: 3 } } },
+          { id: 2, nama: "Layanan Sehat Palopo", opd: "Dinas Kesehatan", jenis: "Digital", status: "Terverifikasi", tglInput: "2026-01-15", koordinat: "-3.0005,120.2050" },
+          { id: 3, nama: "E-Tata Bangunan", opd: "DPUPR", jenis: "Digital", status: "Terverifikasi", tglInput: "2026-03-01", koordinat: "-2.9850,120.1890" },
+          { id: 4, nama: "GoDisabilitas", opd: "Dinas Sosial", jenis: "Non Digital", status: "Menunggu", tglInput: "2026-04-12" },
+          { id: 5, nama: "Bank Sampah Digital ASRI", opd: "DLH", jenis: "Digital", status: "Menunggu", tglInput: "2026-05-20" },
+          { id: 6, nama: "SIMLING Pengaduan", opd: "Diskominfo", jenis: "Digital", status: "Terverifikasi", tglInput: "2026-03-18", koordinat: "-2.9990,120.1995" },
+          { id: 7, nama: "E-Office Terpadu", opd: "Sekretariat Daerah", jenis: "Digital", status: "Menunggu", tglInput: "2026-05-28" },
+          { id: 8, nama: "Aplikasi Pasar Digital", opd: "Dinas Perdagangan", jenis: "Digital", status: "Ditolak", tglInput: "2026-05-27" }
+        ];
+      }
+      // OPD dari manajemen-opd
+      const storedOpd = localStorage.getItem('opd_data');
+      if (storedOpd) opdData = JSON.parse(storedOpd);
+      else opdData = [
+        { id: 1, nama: "Dinas Pendidikan", status: "Aktif" }, { id: 2, nama: "Dinas Kesehatan", status: "Aktif" },
+        { id: 3, nama: "DPUPR", status: "Aktif" }, { id: 4, nama: "Dinas Sosial", status: "Aktif" },
+        { id: 5, nama: "Diskominfo", status: "Aktif" }, { id: 6, nama: "Bappeda", status: "Aktif" },
+        { id: 7, nama: "DLH", status: "Tidak Aktif" }
+      ];
+      // HKI dari kelola-hki
+      const storedHki = localStorage.getItem('hki_data');
+      if (storedHki) hkiData = JSON.parse(storedHki);
+      else hkiData = [];
+      // Monev dari kelola-monev
+      const storedMonev = localStorage.getItem('monev_data');
+      if (storedMonev) monevData = JSON.parse(storedMonev);
+      else monevData = [];
+    }
 
-    // Top 3 Inovasi Bulanan
-    const topInovasi = [
-      { nama: "SIPAKATAU - Sistem Pendidikan", opd: "Dinas Pendidikan", skor: 94.5, thumbnail: "https://placehold.co/80x80/1e3a8a/white?text=SPK", manfaat: "Akses data real-time, angka putus sekolah turun 18%" },
-      { nama: "Layanan Sehat Palopo (LSP)", opd: "Dinas Kesehatan", skor: 92.3, thumbnail: "https://placehold.co/80x80/166534/white?text=LSP", manfaat: "Telemedicine untuk 30rb+ pengguna" },
-      { nama: "SIMLING Pengaduan", opd: "Diskominfo", skor: 91.0, thumbnail: "https://placehold.co/80x80/7c2d12/white?text=SIM", manfaat: "Tingkat penyelesaian aduan 89% <2x24 jam" }
-    ];
-    const topContainer = document.getElementById('top3Container');
-    topContainer.innerHTML = topInovasi.map((ino, idx) => `
-      <div class="flex gap-3 items-center p-2 bg-gray-50 rounded-lg">
-        <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center font-bold text-indigo-700">${idx+1}</div>
-        <img src="${ino.thumbnail}" class="w-10 h-10 rounded object-cover">
-        <div class="flex-1"><p class="font-medium text-gray-800">${ino.nama}</p><p class="text-xs text-gray-500">${ino.opd}</p></div>
-        <div class="text-right"><span class="text-sm font-bold text-indigo-600">${ino.skor}</span><span class="text-xs text-gray-400"> /100</span><br><span class="text-xs text-green-600"><i class="fas fa-star"></i> Terbaik</span></div>
-      </div>
-    `).join('');
+    // Hitung statistik
+    function updateStats() {
+      const total = inovasiData.length;
+      const verified = inovasiData.filter(i => i.status === 'Terverifikasi').length;
+      const pending = inovasiData.filter(i => i.status === 'Menunggu').length;
+      const opdAktifCount = opdData.filter(o => o.status === 'Aktif').length;
+      const totalOpd = opdData.length;
+      const hkiJumlah = hkiData.length;
+
+      document.getElementById('totalInovasi').innerText = total;
+      document.getElementById('verifiedCount').innerText = verified;
+      document.getElementById('pendingInfo').innerHTML = `Menunggu validasi: ${pending}`;
+      document.getElementById('opdAktif').innerText = opdAktifCount;
+      document.getElementById('totalOpdInfo').innerHTML = `Dari ${totalOpd} OPD total`;
+      document.getElementById('hkiCount').innerText = hkiJumlah;
+      return { total, verified, pending, opdAktifCount, totalOpd, hkiJumlah };
+    }
+
+    // Hitung IID sederhana (berdasarkan rumus dari pedoman, simulasi)
+    function calculateIID() {
+      const verifiedInovasi = inovasiData.filter(i => i.status === 'Terverifikasi');
+      const jumlah = verifiedInovasi.length;
+      // SPD (simulasi dari localStorage SPD, jika ada)
+      let spdTotal = 0;
+      const spdStored = localStorage.getItem('spd_values_2026');
+      if (spdStored) {
+        const spd = JSON.parse(spdStored);
+        spdTotal = Object.values(spd).reduce((sum, val) => sum + (val.skor || 0), 0);
+      } else spdTotal = 52.3; // default
+      // SID: rata-rata kualitas (indikator 35) + skor jumlah
+      let totalKualitas = 0;
+      let jumlahDenganKualitas = 0;
+      verifiedInovasi.forEach(ino => {
+        if (ino.sidData && ino.sidData["Kualitas inovasi daerah"]) {
+          totalKualitas += ino.sidData["Kualitas inovasi daerah"].parameter * 33.33; // asumsi parameter 1-3
+          jumlahDenganKualitas++;
+        }
+      });
+      const rataKualitas = jumlahDenganKualitas > 0 ? totalKualitas / Math.max(jumlahDenganKualitas, 10) : 0;
+      const urusanCover = new Set(verifiedInovasi.map(i => i.urusan)).size;
+      let skorJumlah = (urusanCover >= 3) ? Math.min(jumlah, 200) * 0.38 : 0;
+      const sidTotal = rataKualitas + skorJumlah;
+      const totalSkor = spdTotal + sidTotal;
+      const iid = (totalSkor / 250) * 100;
+      return { iid: iid.toFixed(1), trend: "+2.1" };
+    }
+
+    // Top 3 Inovasi (berdasarkan skor kualitas dari sidData)
+    function getTop3Inovasi() {
+      const verified = inovasiData.filter(i => i.status === 'Terverifikasi');
+      const withScore = verified.map(ino => {
+        let kualitasParam = 1;
+        if (ino.sidData && ino.sidData["Kualitas inovasi daerah"]) kualitasParam = ino.sidData["Kualitas inovasi daerah"].parameter;
+        const skor = kualitasParam * 30 + (Math.random() * 10); // simulasi tambahan
+        return { ...ino, skor: Math.min(skor, 100) };
+      });
+      withScore.sort((a,b) => b.skor - a.skor);
+      return withScore.slice(0,3);
+    }
+
+    // Status Monev dari data monev
+    function getMonevStats() {
+      let onTrack = monevData.filter(m => m.status === 'On Track').length;
+      let needAtt = monevData.filter(m => m.status === 'Perlu Perhatian').length;
+      let notRun = monevData.filter(m => m.status === 'Tidak Berjalan').length;
+      const total = onTrack + needAtt + notRun;
+      if (total === 0) { onTrack = 18; needAtt = 7; notRun = 5; } // fallback
+      const totalMonev = onTrack + needAtt + notRun;
+      const onTrackPercent = (onTrack / totalMonev) * 100;
+      const needPercent = (needAtt / totalMonev) * 100;
+      const notPercent = (notRun / totalMonev) * 100;
+      return { onTrack, needAtt, notRun, onTrackPercent, needPercent, notPercent };
+    }
 
     // Tabel pending validasi
-    const pendingList = [
-      { nama: "E-Office Terpadu", opd: "Dinas Sekretariat", tgl: "2026-05-28", status: "Menunggu" },
-      { nama: "Aplikasi Pasar Digital", opd: "Dinas Perdagangan", tgl: "2026-05-27", status: "Revisi" },
-      { nama: "Bank Sampah Berseri", opd: "DLH", tgl: "2026-05-26", status: "Menunggu" },
-      { nama: "Pelatihan UMKM Go Online", opd: "Dinas Koperasi", tgl: "2026-05-25", status: "Menunggu" }
-    ];
-    const pendingTable = document.getElementById('pendingTable');
-    pendingTable.innerHTML = pendingList.map(p => `
-      <tr><td class="px-5 py-3 text-sm">${p.nama}</td><td class="px-5 py-3 text-sm">${p.opd}</td><td class="px-5 py-3 text-sm">${p.tgl}</td><td class="px-5 py-3"><span class="px-2 py-0.5 rounded-full text-xs ${p.status === 'Menunggu' ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700'}">${p.status}</span></td><td class="px-5 py-3"><button class="text-indigo-600 text-sm hover:underline">Review</button></td></tr>
-    `).join('');
-
-    // Chart tren inovasi (tahun 2024,2025,2026)
-    const ctx = document.getElementById('trendChart').getContext('2d');
-    new Chart(ctx, {
-      type: 'line',
-      data: { labels: ['2024', '2025', '2026'], datasets: [{ label: 'Jumlah Inovasi', data: [45, 98, 187], borderColor: '#4f46e5', tension: 0.3, fill: false, pointBackgroundColor: '#4f46e5' }] },
-      options: { responsive: true, maintainAspectRatio: true }
-    });
-
-    // Peta sederhana dengan Leaflet (sebaran dummy)
-    const map = L.map('mapPreview').setView([-2.9925, 120.1969], 12);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OSM' }).addTo(map);
-    const dummyPoints = [[-2.9925,120.1969], [-3.0005,120.2050], [-2.9850,120.1890], [-2.9990,120.1995], [-2.9770,120.2100]];
-    dummyPoints.forEach(coord => L.marker(coord).addTo(map).bindPopup('Inovasi: <b>SIPAKATAU/LSP/dll</b>'));
-
-    // Ambil nama user dari sessionStorage (opsional)
-    const userData = sessionStorage.getItem('loggedInUser');
-    if (userData) {
-      try {
-        const user = JSON.parse(userData);
-        document.getElementById('userName').innerText = user.name || user.role;
-      } catch(e) {}
-    } else {
-      document.getElementById('userName').innerText = 'Admin';
+    function renderPendingTable() {
+      const pending = inovasiData.filter(i => i.status === 'Menunggu');
+      const tbody = document.getElementById('pendingTable');
+      if (pending.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-gray-400">Tidak ada inovasi menunggu validasi</td></tr>';
+        return;
+      }
+      tbody.innerHTML = pending.map(ino => `
+        <tr><td class="px-5 py-3 text-sm">${escapeHtml(ino.nama)}</td><td class="px-5 py-3 text-sm">${escapeHtml(ino.opd)}</td><td class="px-5 py-3 text-sm">${ino.tglInput || '-'}</td><td class="px-5 py-3"><span class="px-2 py-0.5 rounded-full text-xs bg-yellow-100 text-yellow-700">Menunggu</span></td><td class="px-5 py-3"><a href="kelola-inovasi.html" class="text-indigo-600 text-sm hover:underline">Review</a></td></tr>
+      `).join('');
     }
+
+    // Grafik tren (berdasarkan tahun dari tglInput)
+    function renderTrendChart() {
+      const years = { '2024':0, '2025':0, '2026':0 };
+      inovasiData.forEach(ino => {
+        if (ino.tglInput) {
+          const year = ino.tglInput.substring(0,4);
+          if (years[year] !== undefined) years[year]++;
+        }
+      });
+      const ctx = document.getElementById('trendChart').getContext('2d');
+      if (window.trendChartInstance) window.trendChartInstance.destroy();
+      window.trendChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: { labels: Object.keys(years), datasets: [{ label: 'Jumlah Inovasi', data: Object.values(years), borderColor: '#4f46e5', tension: 0.3, fill: false, pointBackgroundColor: '#4f46e5' }] },
+        options: { responsive: true, maintainAspectRatio: true }
+      });
+    }
+
+    // Peta sebaran (dari inovasi terverifikasi yang punya koordinat)
+    let map;
+    function renderMap() {
+      const verifiedWithCoord = inovasiData.filter(i => i.status === 'Terverifikasi' && i.koordinat && i.koordinat.includes(','));
+      if (map) map.remove();
+      map = L.map('mapPreview').setView([-2.9925, 120.1969], 12);
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OSM' }).addTo(map);
+      verifiedWithCoord.forEach(ino => {
+        let [lat, lng] = ino.koordinat.split(',').map(Number);
+        if (!isNaN(lat) && !isNaN(lng)) L.marker([lat, lng]).addTo(map).bindPopup(`<b>${escapeHtml(ino.nama)}</b><br>${ino.opd}`);
+      });
+      document.getElementById('mapCount').innerText = verifiedWithCoord.length;
+      if (verifiedWithCoord.length === 0) {
+        // fallback dummy
+        const dummyPoints = [[-2.9925,120.1969], [-3.0005,120.2050], [-2.9850,120.1890]];
+        dummyPoints.forEach(coord => L.marker(coord).addTo(map).bindPopup('Contoh inovasi'));
+        document.getElementById('mapCount').innerText = dummyPoints.length;
+      }
+    }
+
+    // Notifikasi badge (jumlah pending)
+    function updateNotifBadge() {
+      const pending = inovasiData.filter(i => i.status === 'Menunggu').length;
+      document.getElementById('notifBadge').innerText = pending;
+    }
+
+    // Utils
+    function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+
+    // Load dan refresh seluruh UI
+    function refreshDashboard() {
+      loadAllData();
+      updateStats();
+      const { iid, trend } = calculateIID();
+      document.getElementById('iidValue').innerText = iid;
+      document.getElementById('iidTrend').innerHTML = `<i class="fas fa-arrow-up"></i> ${trend} dari bulan lalu`;
+      // Top 3
+      const top3 = getTop3Inovasi();
+      const topContainer = document.getElementById('top3Container');
+      if (top3.length === 0) topContainer.innerHTML = '<div class="text-gray-400 text-center">Belum ada inovasi terverifikasi</div>';
+      else {
+        topContainer.innerHTML = top3.map((ino, idx) => `
+          <div class="flex gap-3 items-center p-2 bg-gray-50 rounded-lg">
+            <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center font-bold text-indigo-700">${idx+1}</div>
+            <div class="flex-1"><p class="font-medium text-gray-800">${escapeHtml(ino.nama)}</p><p class="text-xs text-gray-500">${escapeHtml(ino.opd)}</p></div>
+            <div class="text-right"><span class="text-sm font-bold text-indigo-600">${ino.skor.toFixed(1)}</span><span class="text-xs text-gray-400"> /100</span></div>
+          </div>
+        `).join('');
+      }
+      // Monev
+      const monevStats = getMonevStats();
+      document.getElementById('onTrackCount').innerText = monevStats.onTrack;
+      document.getElementById('needAttentionCount').innerText = monevStats.needAtt;
+      document.getElementById('notRunningCount').innerText = monevStats.notRun;
+      document.getElementById('onTrackBar').style.width = monevStats.onTrackPercent + '%';
+      document.getElementById('needBar').style.width = monevStats.needPercent + '%';
+      document.getElementById('notBar').style.width = monevStats.notPercent + '%';
+      renderPendingTable();
+      renderTrendChart();
+      renderMap();
+      updateNotifBadge();
+    }
+
+    // Logout & dropdown profile
+    function logout() { sessionStorage.removeItem('loggedInUser'); window.location.href = 'login.html'; }
+    document.getElementById('logoutLink').addEventListener('click', (e) => { e.preventDefault(); logout(); });
+    document.getElementById('sidebarLogout').addEventListener('click', (e) => { e.preventDefault(); logout(); });
+    const profileBtn = document.getElementById('profileBtn');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    profileBtn.addEventListener('click', () => dropdownMenu.classList.toggle('hidden'));
+    document.addEventListener('click', (e) => { if (!profileBtn.contains(e.target)) dropdownMenu.classList.add('hidden'); });
+    const userData = sessionStorage.getItem('loggedInUser');
+    if (userData) { try { const user = JSON.parse(userData); if (user.name) document.getElementById('userName').innerText = user.name; } catch(e) {} }
+    document.getElementById('notifIcon').onclick = () => alert(`Terdapat ${inovasiData.filter(i => i.status === 'Menunggu').length} inovasi menunggu validasi.`);
+
+    refreshDashboard();
+    // Auto-refresh setiap 5 detik (simulasi sinkronisasi)
+    setInterval(refreshDashboard, 5000);
   </script>
 </body>
 </html>
