@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Indikator SPD | Admin Palopo Innovation Hub</title>
+  <!-- Tailwind + Font Awesome + Chart.js -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #f1f5f9; }
+    .modal-transition { transition: opacity 0.2s, visibility 0.2s; }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- Top Navigation -->
+  <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
+    <div class="px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <div class="bg-indigo-600 w-8 h-8 rounded-lg flex items-center justify-center">
+            <i class="fas fa-chart-line text-white text-sm"></i>
+          </div>
+          <span class="font-bold text-gray-800 ml-2">Palopo Innovation Hub</span>
+          <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-0.5 rounded-full ml-3">Admin Panel</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <i class="fas fa-download text-gray-500 cursor-pointer hover:text-indigo-600" id="exportBtn" title="Ekspor Data SPD"></i>
+          <div class="relative">
+            <button id="profileBtn" class="flex items-center gap-2 focus:outline-none">
+              <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-800 font-bold text-sm">AD</div>
+              <span class="text-sm font-medium text-gray-700 hidden md:block" id="userName">Admin</span>
+              <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+            </button>
+            <div id="dropdownMenu" class="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border hidden z-30">
+              <a href="#" id="logoutLink" class="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Layout dengan Sidebar -->
+  <div class="flex">
+    <!-- Sidebar (desktop) -->
+    <aside class="w-64 bg-white border-r border-gray-200 min-h-screen hidden md:block">
+      <div class="p-4 space-y-1">
+        <a href="dashboard-admin.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-tachometer-alt w-5"></i> <span>Dashboard</span>
+        </a>
+        <a href="kelola-inovasi.html" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-lightbulb w-5"></i> <span>Kelola Inovasi</span>
+        </a>
+        <a href="indikator-spd.html" class="flex items-center gap-3 px-3 py-2 text-indigo-600 bg-indigo-50 rounded-lg">
+          <i class="fas fa-chart-simple w-5"></i> <span>Indikator SPD</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-copyright w-5"></i> <span>HKI & Fasilitasi</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-clipboard-list w-5"></i> <span>Monev & Evaluasi</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-flag-checkered w-5"></i> <span>Lomba Inovasi</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-users w-5"></i> <span>Manajemen OPD</span>
+        </a>
+        <a href="login.html" id="sidebarLogout" class="flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg mt-8">
+          <i class="fas fa-sign-out-alt w-5"></i> <span>Keluar</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8">
+      <!-- Header -->
+      <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Indikator Satuan Pemerintah Daerah (SPD)</h1>
+        <p class="text-gray-500 text-sm">Kelola 15 indikator SPD yang berkontribusi 25,2% terhadap Indeks Inovasi Daerah (IID).</p>
+      </div>
+
+      <!-- Ringkasan Skor SPD -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+        <div class="bg-gradient-to-r from-indigo-600 to-indigo-800 rounded-xl shadow-lg p-5 text-white">
+          <div class="flex justify-between"><span class="text-indigo-100 text-sm">Total Skor SPD</span><i class="fas fa-chart-line text-2xl text-indigo-300"></i></div>
+          <div class="text-4xl font-bold mt-2" id="totalSpdScore">0</div>
+          <div class="text-xs text-indigo-200">Maksimal 63 poin</div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-5 border-l-4 border-green-500">
+          <div class="text-gray-500 text-sm">Kontribusi ke IID</div>
+          <div class="text-2xl font-bold" id="kontribusiIid">0%</div>
+          <div class="w-full bg-gray-200 rounded-full h-2 mt-2"><div id="progressKontribusi" class="bg-green-500 h-2 rounded-full" style="width: 0%"></div></div>
+        </div>
+        <div class="bg-white rounded-xl shadow p-5 border-l-4 border-yellow-500">
+          <div class="text-gray-500 text-sm">Target Minimal Nasional</div>
+          <div class="text-2xl font-bold">40.0</div>
+          <div class="text-xs text-gray-400">IID minimal kategori Inovatif</div>
+        </div>
+      </div>
+
+      <!-- Tabel Indikator SPD -->
+      <div class="bg-white rounded-xl shadow overflow-hidden mb-6">
+        <div class="px-5 py-4 border-b flex justify-between items-center">
+          <h3 class="font-bold text-gray-700"><i class="fas fa-list-check mr-2 text-indigo-500"></i> 15 Indikator SPD</h3>
+          <button id="addIndikatorBtn" class="bg-indigo-600 text-white px-3 py-1 rounded-lg text-sm"><i class="fas fa-plus"></i> Tambah Data Tahunan</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Kode</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Indikator</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Target / Parameter</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Nilai Realisasi</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Skor (0-4 atau 0-5)</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="spdTableBody" class="divide-y divide-gray-100">
+              <!-- Data dari JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Grafik Capaian per Indikator (opsional) -->
+      <div class="bg-white rounded-xl shadow p-5">
+        <h3 class="font-bold text-gray-700 mb-3"><i class="fas fa-chart-bar text-indigo-500"></i> Grafik Capaian Skor per Indikator SPD</h3>
+        <canvas id="spdChart" height="120"></canvas>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Edit / Tambah Nilai Indikator -->
+  <div id="editModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm modal-transition">
+    <div class="bg-white rounded-2xl max-w-lg w-full mx-4 p-6">
+      <h3 class="text-xl font-bold mb-4" id="modalTitle">Edit Nilai Indikator SPD</h3>
+      <form id="spdForm">
+        <input type="hidden" id="editKode">
+        <div class="mb-3">
+          <label class="block text-sm font-medium text-gray-700">Nilai Realisasi</label>
+          <input type="text" id="editNilai" class="w-full border rounded-lg px-3 py-2" placeholder="Contoh: 20, Ya, 5%, dll">
+          <p class="text-xs text-gray-400 mt-1" id="editHint">Masukkan nilai sesuai parameter indikator</p>
+        </div>
+        <div class="mb-3">
+          <label class="block text-sm font-medium text-gray-700">Skor Otomatis</label>
+          <input type="number" id="editSkor" step="0.01" class="w-full border rounded-lg px-3 py-2 bg-gray-100" readonly>
+          <p class="text-xs text-gray-400">Skor dihitung otomatis berdasarkan nilai realisasi</p>
+        </div>
+        <div class="flex justify-end gap-3">
+          <button type="button" id="closeModalBtn" class="px-4 py-2 border rounded-lg">Batal</button>
+          <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Data master 15 indikator SPD (kode, nama, parameter, fungsi skor)
+    const indikatorSPD = [
+      { kode: "SPD01", nama: "Visi & Misi (dengan misi inovasi)", parameter: "Ada misi inovasi: Ya/Tidak", getSkor: (val) => val.toLowerCase() === 'ya' ? 4 : 0 },
+      { kode: "SPD02", nama: "APBD tepat waktu & mandatory spending", parameter: "Tepat waktu & anggaran pendidikan≥20%, kesehatan, dana desa, infrastruktur≥40%, belanja pegawai≤30%", getSkor: (val) => { const v = val.toLowerCase(); return v.includes('ya') ? 5 : (v.includes('sebagian') ? 2 : 0); } },
+      { kode: "SPD03", nama: "Kualitas peningkatan perizinan", parameter: "% peningkatan NIB (Nomor Induk Berusaha)", getSkor: (val) => { let p = parseFloat(val); if(isNaN(p)) return 0; if(p>=20) return 4; if(p>=10) return 3; if(p>=5) return 2; if(p>0) return 1; return 0; } },
+      { kode: "SPD04", nama: "Pendapatan per kapita (konstan)", parameter: "Nilai pendapatan per kapita dalam juta rupiah", getSkor: (val) => { let p = parseFloat(val); if(isNaN(p)) return 0; if(p>=50) return 4; if(p>=35) return 3; if(p>=25) return 2; if(p>=15) return 1; return 0; } },
+      { kode: "SPD05", nama: "Penurunan tingkat pengangguran terbuka", parameter: "Persentase penurunan (poin persentase)", getSkor: (val) => { let p = parseFloat(val); if(isNaN(p)) return 0; if(p>=2) return 4; if(p>=1) return 3; if(p>=0.5) return 2; if(p>0) return 1; return 0; } },
+      { kode: "SPD06", nama: "Peningkatan investasi (Rp)", parameter: "Peningkatan dalam miliar rupiah", getSkor: (val) => { let p = parseFloat(val); if(isNaN(p)) return 0; if(p>=500) return 4; if(p>=200) return 3; if(p>=100) return 2; if(p>=50) return 1; return 0; } },
+      { kode: "SPD07", nama: "Peningkatan PAD (%)", parameter: "Persentase peningkatan", getSkor: (val) => { let p = parseFloat(val); if(isNaN(p)) return 0; if(p>=10) return 4; if(p>=7) return 3; if(p>=5) return 2; if(p>=2) return 1; return 0; } },
+      { kode: "SPD08", nama: "Opini BPK", parameter: "WTP/WDP/TW/TM", getSkor: (val) => { let v = val.toUpperCase(); if(v === 'WTP') return 5; if(v === 'WDP') return 3; if(v === 'TW') return 1; return 0; } },
+      { kode: "SPD09", nama: "Nilai capaian LAKIP", parameter: "A/B/C/D", getSkor: (val) => { let v = val.toUpperCase(); if(v === 'A') return 4; if(v === 'B') return 3; if(v === 'C') return 1; return 0; } },
+      { kode: "SPD10", nama: "Penurunan angka kemiskinan", parameter: "Persentase poin penurunan", getSkor: (val) => { let p = parseFloat(val); if(isNaN(p)) return 0; if(p>=1.5) return 4; if(p>=1) return 3; if(p>=0.5) return 2; if(p>0) return 1; return 0; } },
+      { kode: "SPD11", nama: "Nilai IPM (peningkatan)", parameter: "Poin peningkatan IPM", getSkor: (val) => { let p = parseFloat(val); if(isNaN(p)) return 0; if(p>=2) return 4; if(p>=1) return 3; if(p>=0.5) return 2; if(p>0) return 1; return 0; } },
+      { kode: "SPD12", nama: "Penghargaan bagi inovator", parameter: "Ada piagam + insentif + mekanisme kontrol (Ya/Tidak)", getSkor: (val) => val.toLowerCase() === 'ya' ? 4 : 0 },
+      { kode: "SPD13", nama: "Jumlah rekomendasi kebijakan", parameter: "Jumlah policy brief/paper", getSkor: (val) => { let p = parseInt(val); if(isNaN(p)) return 0; if(p>=5) return 4; if(p>=3) return 3; if(p>=1) return 2; return 0; } },
+      { kode: "SPD14", nama: "Roadmap SIDa atau RIPJ PID", parameter: "Ditetapkan dengan Perkada/Perda (Ya/Tidak)", getSkor: (val) => val.toLowerCase() === 'ya' ? 5 : 0 },
+      { kode: "SPD15", nama: "Fasilitasi HAKI", parameter: "Sosialisasi + administrasi + insentif pembiayaan (Ya/Tidak)", getSkor: (val) => val.toLowerCase() === 'ya' ? 5 : 0 }
+    ];
+
+    // Data nilai realisasi dan skor (disimpan di localStorage per tahun 2026)
+    let spdValues = {};
+    function loadData() {
+      const stored = localStorage.getItem('spd_values_2026');
+      if (stored) {
+        spdValues = JSON.parse(stored);
+      } else {
+        // inisialisasi default contoh
+        spdValues = {
+          "SPD01": { nilai: "Ya", skor: 4 },
+          "SPD02": { nilai: "Ya", skor: 5 },
+          "SPD03": { nilai: "15", skor: 3 },
+          "SPD04": { nilai: "42", skor: 3 },
+          "SPD05": { nilai: "1.2", skor: 3 },
+          "SPD06": { nilai: "250", skor: 3 },
+          "SPD07": { nilai: "8", skor: 3 },
+          "SPD08": { nilai: "WTP", skor: 5 },
+          "SPD09": { nilai: "B", skor: 3 },
+          "SPD10": { nilai: "0.8", skor: 2 },
+          "SPD11": { nilai: "1.2", skor: 3 },
+          "SPD12": { nilai: "Ya", skor: 4 },
+          "SPD13": { nilai: "3", skor: 3 },
+          "SPD14": { nilai: "Ya", skor: 5 },
+          "SPD15": { nilai: "Ya", skor: 5 }
+        };
+        saveData();
+      }
+    }
+    function saveData() { localStorage.setItem('spd_values_2026', JSON.stringify(spdValues)); }
+
+    // Hitung ulang skor berdasarkan nilai (panggil getSkor dari master)
+    function calculateSkor(kode, nilai) {
+      const ind = indikatorSPD.find(i => i.kode === kode);
+      if (ind) return ind.getSkor(nilai);
+      return 0;
+    }
+
+    // Render tabel
+    function renderTable() {
+      const tbody = document.getElementById('spdTableBody');
+      let totalSkor = 0;
+      tbody.innerHTML = indikatorSPD.map(ind => {
+        const data = spdValues[ind.kode] || { nilai: "", skor: 0 };
+        const skor = data.skor !== undefined ? data.skor : calculateSkor(ind.kode, data.nilai);
+        totalSkor += skor;
+        return `
+          <tr class="hover:bg-gray-50">
+            <td class="px-4 py-3 text-sm font-mono">${ind.kode}</td>
+            <td class="px-4 py-3 text-sm">${ind.nama}</td>
+            <td class="px-4 py-3 text-xs text-gray-500">${ind.parameter}</td>
+            <td class="px-4 py-3 text-sm">${data.nilai || '-'}</td>
+            <td class="px-4 py-3 text-sm font-semibold ${skor >= 3 ? 'text-green-600' : skor > 0 ? 'text-yellow-600' : 'text-red-600'}">${skor}</td>
+            <td class="px-4 py-3"><button onclick="openEditModal('${ind.kode}')" class="text-indigo-600 hover:text-indigo-800"><i class="fas fa-edit"></i> Edit</button></td>
+          </tr>
+        `;
+      }).join('');
+      document.getElementById('totalSpdScore').innerText = totalSkor;
+      const kontribusi = (totalSkor / 63) * 25.2; // maks kontribusi 25.2% ke IID
+      document.getElementById('kontribusiIid').innerText = kontribusi.toFixed(1) + '%';
+      document.getElementById('progressKontribusi').style.width = (kontribusi / 25.2 * 100) + '%';
+      // Update chart
+      updateChart();
+    }
+
+    // Grafik capaian skor per indikator
+    let chartInstance = null;
+    function updateChart() {
+      const labels = indikatorSPD.map(i => i.kode);
+      const scores = indikatorSPD.map(i => {
+        const data = spdValues[i.kode];
+        return data ? (data.skor !== undefined ? data.skor : calculateSkor(i.kode, data.nilai)) : 0;
+      });
+      const ctx = document.getElementById('spdChart').getContext('2d');
+      if (chartInstance) chartInstance.destroy();
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: { labels, datasets: [{ label: 'Skor SPD', data: scores, backgroundColor: '#4f46e5', borderRadius: 4 }] },
+        options: { responsive: true, maintainAspectRatio: true, scales: { y: { max: 5, title: { display: true, text: 'Skor (maks 4-5)' } } } }
+      });
+    }
+
+    // Modal edit
+    let currentKode = null;
+    const modal = document.getElementById('editModal');
+    function openEditModal(kode) {
+      currentKode = kode;
+      const ind = indikatorSPD.find(i => i.kode === kode);
+      const data = spdValues[kode] || { nilai: "" };
+      document.getElementById('modalTitle').innerText = `Edit ${kode} - ${ind.nama}`;
+      document.getElementById('editKode').value = kode;
+      document.getElementById('editNilai').value = data.nilai || '';
+      document.getElementById('editHint').innerText = `Parameter: ${ind.parameter}`;
+      // Hitung skor sementara berdasarkan nilai saat ini
+      const skor = calculateSkor(kode, data.nilai);
+      document.getElementById('editSkor').value = skor;
+      modal.style.display = 'flex';
+      modal.style.visibility = 'visible';
+    }
+    function closeModal() {
+      modal.style.display = 'none';
+      modal.style.visibility = 'hidden';
+    }
+    document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+    window.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+    // Hitung ulang skor saat nilai berubah (live)
+    document.getElementById('editNilai').addEventListener('input', function() {
+      const kode = document.getElementById('editKode').value;
+      const nilai = this.value;
+      const skor = calculateSkor(kode, nilai);
+      document.getElementById('editSkor').value = skor;
+    });
+
+    // Submit form edit
+    document.getElementById('spdForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const kode = document.getElementById('editKode').value;
+      const nilai = document.getElementById('editNilai').value;
+      const skor = parseFloat(document.getElementById('editSkor').value);
+      spdValues[kode] = { nilai: nilai, skor: skor };
+      saveData();
+      renderTable();
+      closeModal();
+    });
+
+    // Tambah data tahunan (simulasi reset atau copy dari tahun sebelumnya)
+    document.getElementById('addIndikatorBtn').addEventListener('click', () => {
+      if (confirm('Tambah data tahunan untuk tahun 2026? Data saat ini akan diganti dengan data default. (Fitur ini dapat diintegrasikan dengan pemilihan tahun)')) {
+        // Reset ke default contoh
+        spdValues = {
+          "SPD01": { nilai: "Ya", skor: 4 },
+          "SPD02": { nilai: "Ya", skor: 5 },
+          "SPD03": { nilai: "15", skor: 3 },
+          "SPD04": { nilai: "42", skor: 3 },
+          "SPD05": { nilai: "1.2", skor: 3 },
+          "SPD06": { nilai: "250", skor: 3 },
+          "SPD07": { nilai: "8", skor: 3 },
+          "SPD08": { nilai: "WTP", skor: 5 },
+          "SPD09": { nilai: "B", skor: 3 },
+          "SPD10": { nilai: "0.8", skor: 2 },
+          "SPD11": { nilai: "1.2", skor: 3 },
+          "SPD12": { nilai: "Ya", skor: 4 },
+          "SPD13": { nilai: "3", skor: 3 },
+          "SPD14": { nilai: "Ya", skor: 5 },
+          "SPD15": { nilai: "Ya", skor: 5 }
+        };
+        saveData();
+        renderTable();
+        alert('Data SPD tahun 2026 telah direset ke default.');
+      }
+    });
+
+    // Ekspor CSV
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      let csv = "Kode,Indikator,Parameter,Nilai Realisasi,Skor\n";
+      indikatorSPD.forEach(ind => {
+        const data = spdValues[ind.kode] || { nilai: "", skor: 0 };
+        const skor = data.skor !== undefined ? data.skor : calculateSkor(ind.kode, data.nilai);
+        csv += `${ind.kode},${ind.nama},${ind.parameter},${data.nilai || ""},${skor}\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'spd_2026.csv';
+      link.click();
+      URL.revokeObjectURL(link.href);
+    });
+
+    // Logout
+    function logout() { sessionStorage.removeItem('loggedInUser'); window.location.href = 'login.html'; }
+    document.getElementById('logoutLink').addEventListener('click', (e) => { e.preventDefault(); logout(); });
+    document.getElementById('sidebarLogout').addEventListener('click', (e) => { e.preventDefault(); logout(); });
+
+    // Profile dropdown
+    const profileBtn = document.getElementById('profileBtn');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    profileBtn.addEventListener('click', () => dropdownMenu.classList.toggle('hidden'));
+    document.addEventListener('click', (e) => { if (!profileBtn.contains(e.target)) dropdownMenu.classList.add('hidden'); });
+
+    // Set user name
+    const userData = sessionStorage.getItem('loggedInUser');
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        if (user.name) document.getElementById('userName').innerText = user.name;
+      } catch(e) {}
+    }
+
+    loadData();
+    renderTable();
+  </script>
+</body>
+</html>
