@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Palopo Innovation Hub</title>
+  <!-- Tailwind CSS + Font Awesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    .login-card {
+      backdrop-filter: blur(10px);
+      background-color: rgba(255,255,255,0.95);
+      transition: transform 0.2s;
+    }
+    .demo-badge {
+      transition: all 0.2s;
+    }
+    .demo-badge:hover {
+      transform: scale(1.02);
+      background-color: #f3f4f6;
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center p-4">
+  <div class="w-full max-w-md">
+    <!-- Logo & Title -->
+    <div class="text-center mb-6">
+      <div class="inline-flex bg-white/20 backdrop-blur rounded-full p-3 mb-3">
+        <i class="fas fa-lightbulb text-white text-3xl"></i>
+      </div>
+      <h1 class="text-3xl font-bold text-white">Palopo Innovation Hub</h1>
+      <p class="text-indigo-100 text-sm mt-1">Platform Inovasi Daerah Terintegrasi</p>
+    </div>
+
+    <!-- Login Card -->
+    <div class="login-card rounded-2xl shadow-2xl overflow-hidden">
+      <div class="p-8">
+        <h2 class="text-2xl font-bold text-gray-800 text-center">Masuk ke Akun</h2>
+        <p class="text-gray-500 text-center text-sm mt-1">Gunakan akun demo di bawah untuk mencoba</p>
+
+        <!-- Form Login -->
+        <form id="loginForm" class="mt-6 space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              <i class="fas fa-envelope mr-1 text-gray-400"></i> Email / Username
+            </label>
+            <input type="text" id="username" required 
+                   class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                   placeholder="Masukkan email atau username demo">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              <i class="fas fa-lock mr-1 text-gray-400"></i> Password
+            </label>
+            <input type="password" id="password" required 
+                   class="w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:ring-indigo-500 focus:border-indigo-500 transition"
+                   placeholder="Masukkan password">
+          </div>
+          <div class="flex items-center justify-between text-sm">
+            <label class="flex items-center gap-2">
+              <input type="checkbox" class="rounded text-indigo-600">
+              <span class="text-gray-600">Ingat saya</span>
+            </label>
+            <a href="#" class="text-indigo-600 hover:underline">Lupa password?</a>
+          </div>
+          <button type="submit" 
+                  class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition duration-200 shadow-md">
+            <i class="fas fa-sign-in-alt mr-2"></i> Masuk
+          </button>
+        </form>
+
+        <!-- Error Message -->
+        <div id="errorMsg" class="mt-4 text-center text-sm text-red-600 bg-red-50 p-2 rounded-lg hidden"></div>
+
+        <!-- Demo Accounts Info -->
+        <div class="mt-6 pt-4 border-t border-gray-200">
+          <p class="text-xs text-gray-500 text-center mb-3">🔐 Akun Demo (Klik untuk mengisi otomatis)</p>
+          <div class="grid grid-cols-1 gap-2 text-xs">
+            <div class="demo-badge bg-gray-50 p-2 rounded-lg cursor-pointer flex justify-between items-center hover:bg-gray-100" data-username="superadmin@palopo.go.id" data-password="admin123">
+              <div><i class="fas fa-crown text-yellow-600 w-5"></i> <span class="font-medium">Super Admin</span></div>
+              <div class="text-gray-500">superadmin@palopo.go.id / admin123</div>
+              <i class="fas fa-copy text-gray-400"></i>
+            </div>
+            <div class="demo-badge bg-gray-50 p-2 rounded-lg cursor-pointer flex justify-between items-center hover:bg-gray-100" data-username="admin@bappeda.go.id" data-password="inovasi123">
+              <div><i class="fas fa-user-shield text-blue-600 w-5"></i> <span class="font-medium">Admin Inovasi</span></div>
+              <div class="text-gray-500">admin@bappeda.go.id / inovasi123</div>
+              <i class="fas fa-copy text-gray-400"></i>
+            </div>
+            <div class="demo-badge bg-gray-50 p-2 rounded-lg cursor-pointer flex justify-between items-center hover:bg-gray-100" data-username="opd@pendidikan.go.id" data-password="opd123">
+              <div><i class="fas fa-building text-green-600 w-5"></i> <span class="font-medium">OPD (Perangkat Daerah)</span></div>
+              <div class="text-gray-500">opd@pendidikan.go.id / opd123</div>
+              <i class="fas fa-copy text-gray-400"></i>
+            </div>
+            <div class="demo-badge bg-gray-50 p-2 rounded-lg cursor-pointer flex justify-between items-center hover:bg-gray-100" data-username="walikota@palopokota.go.id" data-password="pimpinan123">
+              <div><i class="fas fa-user-tie text-purple-600 w-5"></i> <span class="font-medium">Kepala Daerah / Pimpinan</span></div>
+              <div class="text-gray-500">walikota@palopokota.go.id / pimpinan123</div>
+              <i class="fas fa-copy text-gray-400"></i>
+            </div>
+            <div class="demo-badge bg-gray-50 p-2 rounded-lg cursor-pointer flex justify-between items-center hover:bg-gray-100" data-username="timpenilai@palopo.go.id" data-password="monev123">
+              <div><i class="fas fa-clipboard-list text-orange-600 w-5"></i> <span class="font-medium">Tim Penilai (Monev)</span></div>
+              <div class="text-gray-500">timpenilai@palopo.go.id / monev123</div>
+              <i class="fas fa-copy text-gray-400"></i>
+            </div>
+            <div class="demo-badge bg-gray-50 p-2 rounded-lg cursor-pointer flex justify-between items-center hover:bg-gray-100" data-username="masyarakat@example.com" data-password="public123">
+              <div><i class="fas fa-user text-gray-600 w-5"></i> <span class="font-medium">Masyarakat / Inovator</span></div>
+              <div class="text-gray-500">masyarakat@example.com / public123</div>
+              <i class="fas fa-copy text-gray-400"></i>
+            </div>
+          </div>
+          <p class="text-xs text-gray-400 text-center mt-3">*Gunakan akun di atas untuk mengakses dashboard sesuai peran</p>
+        </div>
+      </div>
+    </div>
+    <div class="text-center text-white/70 text-xs mt-6">
+      <i class="fas fa-database mr-1"></i> Palopo Innovation Hub - Blueprint 2026
+    </div>
+  </div>
+
+  <script>
+    // Mapping akun ke role dan dashboard tujuan
+    const accounts = {
+      "superadmin@palopo.go.id": { password: "admin123", role: "super_admin", dashboard: "dashboard-admin.html" },
+      "admin@bappeda.go.id": { password: "inovasi123", role: "admin_inovasi", dashboard: "dashboard-admin.html" },
+      "opd@pendidikan.go.id": { password: "opd123", role: "opd", dashboard: "dashboard-opd.html" },
+      "walikota@palopokota.go.id": { password: "pimpinan123", role: "kepala_daerah", dashboard: "dashboard-pimpinan.html" },
+      "timpenilai@palopo.go.id": { password: "monev123", role: "tim_penilai", dashboard: "dashboard-monev.html" },
+      "masyarakat@example.com": { password: "public123", role: "masyarakat", dashboard: "index.html" } // masyarakat ke halaman publik
+    };
+
+    const loginForm = document.getElementById('loginForm');
+    const errorDiv = document.getElementById('errorMsg');
+
+    // Fungsi untuk mengisi form dengan data demo (klik pada badge)
+    document.querySelectorAll('.demo-badge').forEach(badge => {
+      badge.addEventListener('click', (e) => {
+        // Mencegah event bubbling jika klik pada icon copy
+        e.stopPropagation();
+        const username = badge.getAttribute('data-username');
+        const password = badge.getAttribute('data-password');
+        document.getElementById('username').value = username;
+        document.getElementById('password').value = password;
+        // Optional: langsung submit? kita tidak submit otomatis, biar user klik tombol
+        // Tapi beri efek highlight
+        errorDiv.classList.add('hidden');
+      });
+    });
+
+    // Handle login submit
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      const account = accounts[username];
+      if (account && account.password === password) {
+        // Simulasi login sukses: simpan data user ke sessionStorage
+        sessionStorage.setItem('loggedInUser', JSON.stringify({
+          username: username,
+          role: account.role,
+          name: getDisplayName(username, account.role)
+        }));
+        // Redirect ke dashboard sesuai role
+        window.location.href = account.dashboard;
+      } else {
+        errorDiv.textContent = '❌ Email atau password salah. Gunakan akun demo di atas.';
+        errorDiv.classList.remove('hidden');
+      }
+    });
+
+    function getDisplayName(username, role) {
+      const names = {
+        "superadmin@palopo.go.id": "Super Admin",
+        "admin@bappeda.go.id": "Admin Inovasi Daerah",
+        "opd@pendidikan.go.id": "Kepala Dinas Pendidikan",
+        "walikota@palopokota.go.id": "Wali Kota Palopo",
+        "timpenilai@palopo.go.id": "Tim Penilai Internal",
+        "masyarakat@example.com": "Inovator Masyarakat"
+      };
+      return names[username] || role;
+    }
+
+    // Cek jika sudah login sebelumnya (opsional)
+    if (sessionStorage.getItem('loggedInUser')) {
+      // Tampilkan alert atau biarkan tetap di login? Untuk keamanan demo, kita biarkan.
+      // Tapi bisa redirect ke dashboard terakhir? Tidak dilakukan agar tidak membingungkan.
+    }
+  </script>
+</body>
+</html>

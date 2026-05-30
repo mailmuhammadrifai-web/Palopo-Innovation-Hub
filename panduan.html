@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Pusat Panduan | Palopo Innovation Hub</title>
+  <!-- Tailwind CSS + Font Awesome + Google Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+                /* navbar */
+        .navbar {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.03);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(0px);
+            border-bottom: 1px solid #eef2f6;
+        }
+        .nav-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            flex-wrap: wrap;
+        }
+        .logo h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0a2540 0%, #0066cc 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+            margin-left: 26px;
+        }
+        .logo p {
+            font-size: 0.80rem;
+            color: #5b6e8c;
+            font-weight: 500;
+            margin-left: 26px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            text-decoration: none;
+            font-weight: 600;
+            color: #1f3a5f;
+            transition: 0.2s;
+        }
+        .nav-links a:hover {
+            color: #0066cc;
+        }
+        .btn-login {
+            background: #0a2540;
+            color: white !important;
+            padding: 8px 20px;
+            border-radius: 40px;
+            transition: 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            margin-right: -47px;
+        }
+        .btn-login:hover {
+            background: #0066cc;
+            transform: translateY(-1px);
+        }
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #f8fafc; }
+    .guide-card {
+      transition: all 0.2s ease;
+    }
+    .guide-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 20px -12px rgba(0, 0, 0, 0.15);
+    }
+    .search-highlight {
+      background-color: #fef08a;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body class="antialiased">
+  <nav class="navbar">
+    <div class="container nav-flex">
+        <div class="logo">
+            <h1>Palopo Innovation Hub</h1>
+            <p>Ekosistem Inovasi Daerah 2026</p>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Beranda</a>
+            <a href="bank-inovasi.html">Bank Inovasi</a>
+            <a href="peta-sebaran.html">Peta Sebaran</a>
+            <a href="e-bimtek.html">E-Bimtek</a>
+            <a href="panduan.html">Panduan</a>
+            <a href="faq.html">FAQ</a>
+            <a href="login.html" class="btn-login">Login OPD/Admin</a>
+        </div>
+    </div>
+</nav>
+
+  <!-- Hero -->
+  <div class="bg-gradient-to-r from-slate-800 to-slate-700 text-white py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-bold flex items-center gap-2"><i class="fas fa-life-ring"></i> Panduan & Referensi</h2>
+      <p class="text-slate-200 mt-1 max-w-2xl">Akses pedoman resmi, SOP teknis, template, dan buku petunjuk penggunaan website Palopo Innovation Hub.</p>
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Search & Filter -->
+    <div class="bg-white rounded-xl shadow-sm p-5 mb-8 border border-gray-200">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-1"><i class="fas fa-search mr-1"></i> Cari dokumen</label>
+          <input type="text" id="searchInput" placeholder="Masukkan kata kunci (judul, deskripsi, kategori)..." class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1"><i class="fas fa-filter mr-1"></i> Kategori</label>
+          <select id="categoryFilter" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white">
+            <option value="all">Semua Kategori</option>
+            <option value="Pedoman Umum">Pedoman Umum IGA</option>
+            <option value="Indikator IID">Penjelasan Teknis Indikator IID</option>
+            <option value="SOP">SOP & Prosedur</option>
+            <option value="Template">Template & Formulir</option>
+            <option value="User Manual">User Manual Website</option>
+            <option value="Regulasi">Regulasi & Kebijakan</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex justify-end mt-3">
+        <button id="resetFilterBtn" class="text-sm text-gray-500 hover:text-indigo-600"><i class="fas fa-undo-alt mr-1"></i> Reset filter</button>
+      </div>
+    </div>
+
+    <!-- Jumlah hasil -->
+    <div class="flex justify-between items-center mb-4">
+      <p class="text-sm text-gray-500"><i class="fas fa-file-alt mr-1"></i> <span id="resultCount">0</span> dokumen ditemukan</p>
+      <p class="text-xs text-gray-400">Terakhir diperbarui: Maret 2026</p>
+    </div>
+
+    <!-- Grid daftar panduan -->
+    <div id="guidesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Dynamic cards -->
+    </div>
+
+    <!-- Jika tidak ada hasil -->
+    <div id="noResultMsg" class="hidden text-center py-12 bg-white rounded-xl mt-4">
+      <i class="fas fa-file-alt text-gray-300 text-5xl mb-3"></i>
+      <p class="text-gray-500">Tidak ada dokumen yang sesuai dengan pencarian Anda.</p>
+      <button id="clearSearchBtn" class="mt-3 text-indigo-600 underline text-sm">Hapus filter & cari lagi</button>
+    </div>
+
+    <!-- Informasi tambahan -->
+    <div class="mt-10 bg-indigo-50 rounded-xl p-5 border border-indigo-100 flex flex-wrap justify-between items-center">
+      <div><i class="fas fa-headset text-indigo-600 text-2xl mr-3 float-left"></i> <span class="font-medium">Butuh bantuan lebih lanjut?</span><br><span class="text-sm text-gray-600">Kirim tiket dukungan melalui fitur FAQ atau hubungi Admin Inovasi Daerah.</span></div>
+      <a href="#" class="bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm hover:bg-indigo-700 transition"><i class="fas fa-ticket-alt mr-1"></i> Buat Tiket Dukungan</a>
+    </div>
+  </main>
+
+  <footer class="border-t border-gray-200 bg-white mt-12 py-6 text-center text-sm text-gray-500">
+    <div class="max-w-7xl mx-auto px-4">© 2026 Palopo Innovation Hub - Seluruh dokumen dapat diunduh dalam format PDF | Versi 1.0</div>
+  </footer>
+
+  <script>
+    // Data dokumen panduan (judul, deskripsi, kategori, fileUrl simulasi, ikon, tanggal)
+    const guidesData = [
+      { id: 1, title: "Pedoman Umum IGA 2026", description: "Dokumen resmi dari Kemendagri tentang tata cara penilaian Indeks Inovasi Daerah tahun 2026, mencakup kriteria, bobot, dan jadwal.", category: "Pedoman Umum", fileUrl: "#", fileSize: "2.4 MB", icon: "fa-file-pdf", date: "Jan 2026" },
+      { id: 2, title: "Penjelasan Teknis Indikator IID", description: "Rincian 35 indikator SID (Sistem Inovasi Daerah) dan 15 indikator SPD (Satuan Pemerintah Daerah) lengkap dengan rumus perhitungan.", category: "Indikator IID", fileUrl: "#", fileSize: "1.8 MB", icon: "fa-chart-line", date: "Feb 2026" },
+      { id: 3, title: "SOP Pengisian Profil Inovasi", description: "Standar Operasional Prosedur pengisian formulir digital inovasi, termasuk persyaratan unggah foto, video, dan rancang bangun minimal 300 kata.", category: "SOP", fileUrl: "#", fileSize: "1.2 MB", icon: "fa-clipboard-list", date: "Des 2025" },
+      { id: 4, title: "Template Rancang Bangun Inovasi", description: "Dokumen template .docx yang berisi struktur rancang bangun (dasar hukum, masalah, keunggulan, tahapan) wajib diisi dalam profil inovasi.", category: "Template", fileUrl: "#", fileSize: "0.9 MB", icon: "fa-file-word", date: "Nov 2025" },
+      { id: 5, title: "Panduan Penggunaan Website (User Manual)", description: "Lengkap mulai dari registrasi akun, login, input inovasi, melihat dashboard, hingga menggunakan fitur bank inovasi dan replikasi.", category: "User Manual", fileUrl: "#", fileSize: "3.1 MB", icon: "fa-book", date: "Mar 2026" },
+      { id: 6, title: "Regulasi Inovasi Daerah & Perkada No. 12/2025", description: "Peraturan Kepala Daerah tentang Sistem Inovasi Daerah dan pembentukan Tim Percepatan Inovasi.", category: "Regulasi", fileUrl: "#", fileSize: "1.5 MB", icon: "fa-gavel", date: "Agt 2025" },
+      { id: 7, title: "Panduan Lomba Inovasi Kota Palopo 2026", description: "Petunjuk teknis pendaftaran, kriteria penilaian, dan jadwal pelaksanaan lomba inovasi tingkat kota.", category: "Pedoman Umum", fileUrl: "#", fileSize: "1.1 MB", icon: "fa-trophy", date: "Feb 2026" },
+      { id: 8, title: "Template Profil Bisnis Inovasi", description: "Formulir opsional untuk inovasi yang sudah berpotensi komersialisasi, berisi analisis pasar dan model bisnis.", category: "Template", fileUrl: "#", fileSize: "0.7 MB", icon: "fa-chart-pie", date: "Jan 2026" },
+      { id: 9, title: "SOP Replikasi Inovasi", description: "Prosedur pengajuan, verifikasi, dan persetujuan replikasi inovasi antar OPD atau daerah lain.", category: "SOP", fileUrl: "#", fileSize: "1.0 MB", icon: "fa-copy", date: "Des 2025" }
+    ];
+
+    // Element references
+    const container = document.getElementById('guidesContainer');
+    const searchInput = document.getElementById('searchInput');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const resetBtn = document.getElementById('resetFilterBtn');
+    const resultCountSpan = document.getElementById('resultCount');
+    const noResultDiv = document.getElementById('noResultMsg');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+
+    let currentFiltered = [...guidesData];
+
+    // Fungsi highlight teks (sederhana untuk title & description)
+    function highlightText(text, keyword) {
+      if (!keyword.trim()) return text;
+      const regex = new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+      return text.replace(regex, '<mark class="bg-yellow-200 rounded px-0.5">$1</mark>');
+    }
+
+    // Render kartu
+    function renderCards() {
+      const keyword = searchInput.value.trim();
+      const category = categoryFilter.value;
+      
+      currentFiltered = guidesData.filter(guide => {
+        let matchCat = true;
+        if (category !== 'all' && guide.category !== category) matchCat = false;
+        let matchSearch = true;
+        if (keyword) {
+          const haystack = (guide.title + ' ' + guide.description + ' ' + guide.category).toLowerCase();
+          matchSearch = haystack.includes(keyword.toLowerCase());
+        }
+        return matchCat && matchSearch;
+      });
+
+      resultCountSpan.innerText = currentFiltered.length;
+      
+      if (currentFiltered.length === 0) {
+        container.classList.add('hidden');
+        noResultDiv.classList.remove('hidden');
+        return;
+      }
+      container.classList.remove('hidden');
+      noResultDiv.classList.add('hidden');
+      
+      container.innerHTML = currentFiltered.map(guide => {
+        let displayTitle = guide.title;
+        let displayDesc = guide.description;
+        if (keyword) {
+          displayTitle = highlightText(guide.title, keyword);
+          displayDesc = highlightText(guide.description, keyword);
+        }
+        return `
+          <div class="guide-card bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden flex flex-col transition-all">
+            <div class="p-5 flex-1">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-2">
+                  <i class="fas ${guide.icon} text-indigo-500 text-xl"></i>
+                  <h3 class="font-bold text-gray-800 text-md">${displayTitle}</h3>
+                </div>
+                <span class="text-xs text-gray-400">${guide.date}</span>
+              </div>
+              <p class="text-gray-600 text-sm mt-2 leading-relaxed">${displayDesc}</p>
+              <div class="mt-3 flex flex-wrap justify-between items-center">
+                <div class="text-xs text-gray-400"><i class="far fa-file-pdf"></i> PDF, ${guide.fileSize}</div>
+                <button onclick="downloadGuide('${guide.title}', '${guide.fileUrl}')" class="inline-flex items-center gap-1 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-sm font-medium transition"><i class="fas fa-download"></i> Unduh</button>
+              </div>
+              <div class="mt-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700"><i class="fas fa-tag mr-1"></i> ${guide.category}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Simulasi unduh PDF
+    window.downloadGuide = (title, url) => {
+      // Simulasi download (karena file hanya #, kita tampilkan alert informasi)
+      alert(`📄 Mengunduh "${title}" dalam format PDF.\n\nPada implementasi nyata, file PDF akan disediakan oleh server. Panduan ini sudah tersedia di folder /dokumen.`);
+      // Bisa juga redirect ke url jika ada # ganti dengan link sebenarnya.
+      // Untuk keperluan demo, kita hanya memberikan notifikasi.
+    };
+
+    // Event listeners
+    function applyFilters() {
+      renderCards();
+    }
+
+    searchInput.addEventListener('input', applyFilters);
+    categoryFilter.addEventListener('change', applyFilters);
+    resetBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      categoryFilter.value = 'all';
+      applyFilters();
+    });
+    if (clearSearchBtn) {
+      clearSearchBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        categoryFilter.value = 'all';
+        applyFilters();
+      });
+    }
+
+    // Inisialisasi
+    renderCards();
+  </script>
+</body>
+</html>

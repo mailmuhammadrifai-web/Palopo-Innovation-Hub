@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Dashboard Admin | Palopo Innovation Hub</title>
+  <!-- Tailwind CSS + Font Awesome + Chart.js + Leaflet -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #f1f5f9; }
+    .sidebar-icon { transition: all 0.2s; }
+    .card-hover { transition: transform 0.1s ease; }
+    .card-hover:hover { transform: translateY(-2px); }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- Top Navigation -->
+  <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
+    <div class="px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 flex items-center gap-2">
+            <div class="bg-indigo-600 w-8 h-8 rounded-lg flex items-center justify-center">
+              <i class="fas fa-chart-line text-white text-sm"></i>
+            </div>
+            <span class="font-bold text-gray-800">Palopo Innovation Hub</span>
+            <span class="bg-indigo-100 text-indigo-700 text-xs px-2 py-0.5 rounded-full ml-2">Admin Panel</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="relative">
+            <i class="fas fa-bell text-gray-500 cursor-pointer"></i>
+            <span class="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">3</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-800 font-bold text-sm">AD</div>
+            <span class="text-sm font-medium text-gray-700 hidden md:block" id="userName">Admin</span>
+            <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="flex">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-white border-r border-gray-200 min-h-screen hidden md:block">
+      <div class="p-4 space-y-1">
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-indigo-600 bg-indigo-50 rounded-lg">
+          <i class="fas fa-tachometer-alt w-5"></i> <span>Dashboard</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-lightbulb w-5"></i> <span>Kelola Inovasi</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-chart-simple w-5"></i> <span>Indikator SPD</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-copyright w-5"></i> <span>HKI & Fasilitasi</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-clipboard-list w-5"></i> <span>Monev & Evaluasi</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-flag-checkered w-5"></i> <span>Lomba Inovasi</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-users w-5"></i> <span>Manajemen OPD</span>
+        </a>
+        <a href="login.html" class="flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg mt-8">
+          <i class="fas fa-sign-out-alt w-5"></i> <span>Keluar</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8">
+      
+      <!-- Header & IID Score -->
+      <div class="mb-6 flex flex-wrap justify-between items-center">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800">Dashboard Admin Inovasi</h1>
+          <p class="text-gray-500 text-sm">Pantau indeks inovasi daerah, validasi inovasi, dan kinerja OPD secara real-time.</p>
+        </div>
+        <div class="mt-2 sm:mt-0 bg-white rounded-xl shadow-sm px-4 py-2 border">
+          <span class="text-xs text-gray-500">Indeks IID Saat Ini</span>
+          <div class="text-2xl font-bold text-indigo-700" id="iidValue">67.2</div>
+          <span class="text-xs text-green-600"><i class="fas fa-arrow-up"></i> +3.2 dari bulan lalu</span>
+        </div>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-indigo-500 card-hover">
+          <div class="flex justify-between"><span class="text-gray-500 text-sm">Total Inovasi</span><i class="fas fa-chart-line text-indigo-400"></i></div>
+          <div class="text-3xl font-bold mt-2" id="totalInovasi">187</div>
+          <div class="text-xs text-gray-400 mt-1">Target minimal nasional: 12</div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-green-500 card-hover">
+          <div class="flex justify-between"><span class="text-gray-500 text-sm">Terverifikasi</span><i class="fas fa-check-circle text-green-400"></i></div>
+          <div class="text-3xl font-bold mt-2" id="verifiedCount">156</div>
+          <div class="text-xs text-gray-400">Menunggu validasi: 12</div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-yellow-500 card-hover">
+          <div class="flex justify-between"><span class="text-gray-500 text-sm">OPD Aktif</span><i class="fas fa-building text-yellow-400"></i></div>
+          <div class="text-3xl font-bold mt-2" id="opdAktif">24</div>
+          <div class="text-xs text-gray-400">Dari 32 OPD total</div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-purple-500 card-hover">
+          <div class="flex justify-between"><span class="text-gray-500 text-sm">HKI Terdaftar</span><i class="fas fa-copyright text-purple-400"></i></div>
+          <div class="text-3xl font-bold mt-2" id="hkiCount">8</div>
+          <div class="text-xs text-gray-400">Merek, paten, hak cipta</div>
+        </div>
+      </div>
+
+      <!-- Chart & Peta Sebaran -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Grafik Tren Inovasi -->
+        <div class="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
+          <h3 class="font-semibold text-gray-700 mb-3"><i class="fas fa-chart-bar text-indigo-500 mr-2"></i> Tren Inovasi per Tahun</h3>
+          <canvas id="trendChart" height="200"></canvas>
+        </div>
+        <!-- Peta Sebaran Inovasi (Ringkasan) -->
+        <div class="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
+          <h3 class="font-semibold text-gray-700 mb-3"><i class="fas fa-map-marker-alt text-red-500 mr-2"></i> Peta Sebaran Inovasi (Preview)</h3>
+          <div id="mapPreview" style="height: 220px; border-radius: 12px;" class="z-0"></div>
+          <div class="text-xs text-gray-400 mt-2 text-center"><i class="fas fa-info-circle"></i> 11 titik implementasi inovasi di wilayah Palopo</div>
+        </div>
+      </div>
+
+      <!-- Top 3 Inovasi Bulanan & Monev Status -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Top 3 Inovasi -->
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm p-5 border border-gray-100">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="font-semibold text-gray-700"><i class="fas fa-trophy text-yellow-500 mr-2"></i> 3 Inovasi Terbaik Bulan Ini</h3>
+            <span class="text-xs bg-gray-100 px-2 py-1 rounded">Berdasarkan kualitas & kemanfaatan</span>
+          </div>
+          <div id="top3Container" class="space-y-3">
+            <!-- dinamis -->
+          </div>
+        </div>
+        <!-- Status Monev -->
+        <div class="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
+          <h3 class="font-semibold text-gray-700 mb-3"><i class="fas fa-clipboard-check text-blue-500 mr-2"></i> Status Monev Triwulan</h3>
+          <div class="space-y-3">
+            <div><div class="flex justify-between text-sm"><span>On Track</span><span class="font-bold text-green-600" id="onTrackCount">18</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-green-500 h-2 rounded-full" style="width: 60%"></div></div></div>
+            <div><div class="flex justify-between text-sm"><span>Perlu Perhatian</span><span class="font-bold text-yellow-600" id="needAttentionCount">7</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-yellow-500 h-2 rounded-full" style="width: 23%"></div></div></div>
+            <div><div class="flex justify-between text-sm"><span>Tidak Berjalan</span><span class="font-bold text-red-600" id="notRunningCount">5</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-red-500 h-2 rounded-full" style="width: 17%"></div></div></div>
+          </div>
+          <button class="mt-4 w-full text-indigo-600 text-sm border border-indigo-200 py-1.5 rounded-lg hover:bg-indigo-50 transition">Lihat Detail Monev</button>
+        </div>
+      </div>
+
+      <!-- Tabel Inovasi Terbaru / Pending Validasi -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-5 py-4 border-b flex justify-between items-center">
+          <h3 class="font-semibold text-gray-700"><i class="fas fa-clock mr-2 text-orange-500"></i> Inovasi Menunggu Validasi</h3>
+          <button class="text-indigo-600 text-sm hover:underline">Validasi Massal</button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Nama Inovasi</th><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">OPD</th><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Tanggal Input</th><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Status</th><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Aksi</th></tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100" id="pendingTable">
+              <!-- baris dinamis -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // Data dummy untuk admin dashboard
+    const totalInovasi = 187;
+    const verifiedCount = 156;
+    const pendingCount = totalInovasi - verifiedCount;
+    const opdAktif = 24;
+    const hkiCount = 8;
+
+    document.getElementById('totalInovasi').innerText = totalInovasi;
+    document.getElementById('verifiedCount').innerText = verifiedCount;
+    document.getElementById('opdAktif').innerText = opdAktif;
+    document.getElementById('hkiCount').innerText = hkiCount;
+
+    // Top 3 Inovasi Bulanan
+    const topInovasi = [
+      { nama: "SIPAKATAU - Sistem Pendidikan", opd: "Dinas Pendidikan", skor: 94.5, thumbnail: "https://placehold.co/80x80/1e3a8a/white?text=SPK", manfaat: "Akses data real-time, angka putus sekolah turun 18%" },
+      { nama: "Layanan Sehat Palopo (LSP)", opd: "Dinas Kesehatan", skor: 92.3, thumbnail: "https://placehold.co/80x80/166534/white?text=LSP", manfaat: "Telemedicine untuk 30rb+ pengguna" },
+      { nama: "SIMLING Pengaduan", opd: "Diskominfo", skor: 91.0, thumbnail: "https://placehold.co/80x80/7c2d12/white?text=SIM", manfaat: "Tingkat penyelesaian aduan 89% <2x24 jam" }
+    ];
+    const topContainer = document.getElementById('top3Container');
+    topContainer.innerHTML = topInovasi.map((ino, idx) => `
+      <div class="flex gap-3 items-center p-2 bg-gray-50 rounded-lg">
+        <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center font-bold text-indigo-700">${idx+1}</div>
+        <img src="${ino.thumbnail}" class="w-10 h-10 rounded object-cover">
+        <div class="flex-1"><p class="font-medium text-gray-800">${ino.nama}</p><p class="text-xs text-gray-500">${ino.opd}</p></div>
+        <div class="text-right"><span class="text-sm font-bold text-indigo-600">${ino.skor}</span><span class="text-xs text-gray-400"> /100</span><br><span class="text-xs text-green-600"><i class="fas fa-star"></i> Terbaik</span></div>
+      </div>
+    `).join('');
+
+    // Tabel pending validasi
+    const pendingList = [
+      { nama: "E-Office Terpadu", opd: "Dinas Sekretariat", tgl: "2026-05-28", status: "Menunggu" },
+      { nama: "Aplikasi Pasar Digital", opd: "Dinas Perdagangan", tgl: "2026-05-27", status: "Revisi" },
+      { nama: "Bank Sampah Berseri", opd: "DLH", tgl: "2026-05-26", status: "Menunggu" },
+      { nama: "Pelatihan UMKM Go Online", opd: "Dinas Koperasi", tgl: "2026-05-25", status: "Menunggu" }
+    ];
+    const pendingTable = document.getElementById('pendingTable');
+    pendingTable.innerHTML = pendingList.map(p => `
+      <tr><td class="px-5 py-3 text-sm">${p.nama}</td><td class="px-5 py-3 text-sm">${p.opd}</td><td class="px-5 py-3 text-sm">${p.tgl}</td><td class="px-5 py-3"><span class="px-2 py-0.5 rounded-full text-xs ${p.status === 'Menunggu' ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700'}">${p.status}</span></td><td class="px-5 py-3"><button class="text-indigo-600 text-sm hover:underline">Review</button></td></tr>
+    `).join('');
+
+    // Chart tren inovasi (tahun 2024,2025,2026)
+    const ctx = document.getElementById('trendChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: { labels: ['2024', '2025', '2026'], datasets: [{ label: 'Jumlah Inovasi', data: [45, 98, 187], borderColor: '#4f46e5', tension: 0.3, fill: false, pointBackgroundColor: '#4f46e5' }] },
+      options: { responsive: true, maintainAspectRatio: true }
+    });
+
+    // Peta sederhana dengan Leaflet (sebaran dummy)
+    const map = L.map('mapPreview').setView([-2.9925, 120.1969], 12);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OSM' }).addTo(map);
+    const dummyPoints = [[-2.9925,120.1969], [-3.0005,120.2050], [-2.9850,120.1890], [-2.9990,120.1995], [-2.9770,120.2100]];
+    dummyPoints.forEach(coord => L.marker(coord).addTo(map).bindPopup('Inovasi: <b>SIPAKATAU/LSP/dll</b>'));
+
+    // Ambil nama user dari sessionStorage (opsional)
+    const userData = sessionStorage.getItem('loggedInUser');
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        document.getElementById('userName').innerText = user.name || user.role;
+      } catch(e) {}
+    } else {
+      document.getElementById('userName').innerText = 'Admin';
+    }
+  </script>
+</body>
+</html>

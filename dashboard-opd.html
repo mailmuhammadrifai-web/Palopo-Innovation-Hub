@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Dashboard OPD | Palopo Innovation Hub</title>
+  <!-- Tailwind CSS + Font Awesome + Chart.js -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #f1f5f9; }
+    .modal-transition { transition: opacity 0.2s, visibility 0.2s; }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- Top Navigation -->
+  <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
+    <div class="px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 flex items-center gap-2">
+            <div class="bg-indigo-600 w-8 h-8 rounded-lg flex items-center justify-center">
+              <i class="fas fa-building text-white text-sm"></i>
+            </div>
+            <span class="font-bold text-gray-800">Palopo Innovation Hub</span>
+            <span class="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full ml-2">OPD Panel</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="relative">
+            <i class="fas fa-bell text-gray-500 cursor-pointer" id="notifIcon"></i>
+            <span class="absolute -top-1 -right-2 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center" id="notifBadge">2</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-800 font-bold text-sm" id="userInitial">DP</div>
+            <span class="text-sm font-medium text-gray-700 hidden md:block" id="userName">Dinas Pendidikan</span>
+            <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="flex">
+    <!-- Sidebar sederhana -->
+    <aside class="w-64 bg-white border-r border-gray-200 min-h-screen hidden md:block">
+      <div class="p-4 space-y-1">
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-indigo-600 bg-indigo-50 rounded-lg">
+          <i class="fas fa-tachometer-alt w-5"></i> <span>Dashboard</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-lightbulb w-5"></i> <span>Daftar Inovasi Saya</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-copy w-5"></i> <span>Bank Inovasi</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+          <i class="fas fa-chart-line w-5"></i> <span>E-Bimtek</span>
+        </a>
+        <a href="login.html" class="flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg mt-8">
+          <i class="fas fa-sign-out-alt w-5"></i> <span>Keluar</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8">
+      <!-- Header -->
+      <div class="mb-6 flex flex-wrap justify-between items-center">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800">Dashboard OPD</h1>
+          <p class="text-gray-500 text-sm" id="opdSubtitle">Dinas Pendidikan - Kelola inovasi dan pantau kinerja</p>
+        </div>
+        <button id="openModalBtn" class="mt-2 sm:mt-0 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow"><i class="fas fa-plus mr-1"></i> Tambah Inovasi Baru</button>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-indigo-500">
+          <div class="flex justify-between"><span class="text-gray-500 text-sm">Total Inovasi Saya</span><i class="fas fa-chart-line text-indigo-400"></i></div>
+          <div class="text-3xl font-bold mt-2" id="myInovasiCount">0</div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-green-500">
+          <div class="flex justify-between"><span class="text-gray-500 text-sm">Terverifikasi</span><i class="fas fa-check-circle text-green-400"></i></div>
+          <div class="text-3xl font-bold mt-2" id="verifiedCount">0</div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-yellow-500">
+          <div class="flex justify-between"><span class="text-gray-500 text-sm">Menunggu Validasi</span><i class="fas fa-clock text-yellow-400"></i></div>
+          <div class="text-3xl font-bold mt-2" id="pendingCount">0</div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-purple-500">
+          <div class="flex justify-between"><span class="text-gray-500 text-sm">Jumlah Replikasi</span><i class="fas fa-copy text-purple-400"></i></div>
+          <div class="text-3xl font-bold mt-2" id="replikasiCount">0</div>
+        </div>
+      </div>
+
+      <!-- Chart & Pemenuhan Urusan -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
+          <h3 class="font-semibold text-gray-700 mb-3"><i class="fas fa-chart-pie text-indigo-500 mr-2"></i> Sebaran Bentuk Inovasi</h3>
+          <canvas id="bentukChart" height="200"></canvas>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm p-5 border border-gray-100">
+          <h3 class="font-semibold text-gray-700 mb-3"><i class="fas fa-check-double text-green-500 mr-2"></i> Pemenuhan Urusan Wajib</h3>
+          <div id="urusanList" class="space-y-2 text-sm">
+            <!-- dynamic -->
+          </div>
+          <div class="mt-3 text-xs text-gray-500">*Minimal 5 dari 6 urusan dasar untuk penilaian IGA</div>
+        </div>
+      </div>
+
+      <!-- Daftar Inovasi OPD -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="px-5 py-4 border-b flex justify-between items-center">
+          <h3 class="font-semibold text-gray-700"><i class="fas fa-list mr-2 text-indigo-500"></i> Inovasi yang Telah Diinput</h3>
+          <input type="text" id="searchInovasi" placeholder="Cari inovasi..." class="border rounded-lg px-3 py-1 text-sm">
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Nama Inovasi</th><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Jenis</th><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Status</th><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Tgl Input</th><th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Aksi</th></tr>
+            </thead>
+            <tbody id="inovasiTableBody" class="divide-y divide-gray-100">
+              <!-- dynamic -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tombol lihat bank inovasi -->
+      <div class="mt-6 text-center">
+        <a href="#" class="text-indigo-600 hover:underline text-sm"><i class="fas fa-database mr-1"></i> Lihat Bank Inovasi Daerah (Replikasi)</a>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Tambah Inovasi -->
+  <div id="inovasiModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm modal-transition">
+    <div class="bg-white rounded-2xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
+        <h3 class="text-xl font-bold text-slate-800">Tambah Inovasi Baru</h3>
+        <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+      </div>
+      <form id="formInovasi" class="p-6 space-y-4">
+        <div><label class="block text-sm font-medium text-gray-700">Nama Inovasi *</label><input type="text" id="namaInovasi" required class="w-full border rounded-lg px-3 py-2"></div>
+        <div><label class="block text-sm font-medium text-gray-700">Jenis Inovasi *</label><select id="jenisInovasi" class="w-full border rounded-lg px-3 py-2"><option>Digital</option><option>Non Digital</option></select></div>
+        <div><label class="block text-sm font-medium text-gray-700">Bentuk Inovasi *</label><select id="bentukInovasi" class="w-full border rounded-lg px-3 py-2"><option>Tata Kelola</option><option>Pelayanan Publik</option><option>Lainnya</option></select></div>
+        <div><label class="block text-sm font-medium text-gray-700">Urusan Utama *</label><select id="urusanInovasi" class="w-full border rounded-lg px-3 py-2"><option>Pendidikan</option><option>Kesehatan</option><option>Sosial</option><option>PUPR</option><option>Perumahan</option><option>Ketenteraman</option></select></div>
+        <div><label class="block text-sm font-medium text-gray-700">Deskripsi Singkat</label><textarea rows="2" id="deskripsiInovasi" class="w-full border rounded-lg px-3 py-2"></textarea></div>
+        <div class="text-xs text-gray-400">*Kolom wajib. Setelah submit, inovasi akan divalidasi oleh Admin.</div>
+        <div class="flex justify-end gap-3"><button type="button" id="cancelModal" class="px-4 py-2 border rounded-lg">Batal</button><button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg">Simpan & Kirim</button></div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="bg-white border-t mt-10 py-4 text-center text-xs text-gray-400">© 2026 Palopo Innovation Hub - OPD dapat memantau inovasi dan melakukan replikasi</footer>
+
+  <script>
+    // Data OPD saat ini (demo: Dinas Pendidikan)
+    const currentOPD = {
+      id: 1,
+      nama: "Dinas Pendidikan",
+      singkatan: "Disdik",
+      userEmail: "opd@pendidikan.go.id"
+    };
+    document.getElementById('userName').innerText = currentOPD.nama;
+    document.getElementById('userInitial').innerText = currentOPD.singkatan.charAt(0);
+    document.getElementById('opdSubtitle').innerHTML = `${currentOPD.nama} - Kelola inovasi dan pantau kinerja`;
+
+    // Data inovasi milik OPD ini (simulasi, akan disimpan di localStorage)
+    let inovasiOPD = [
+      { id: 1, nama: "SIPAKATAU - Sistem Informasi Pendidikan", jenis: "Digital", bentuk: "Pelayanan Publik", urusan: "Pendidikan", deskripsi: "Aplikasi manajemen sekolah", status: "Terverifikasi", tglInput: "2026-02-10", replikasi: 5 },
+      { id: 2, nama: "E-Learning Guru Pintar", jenis: "Digital", bentuk: "Pelayanan Publik", urusan: "Pendidikan", deskripsi: "Pelatihan online untuk guru", status: "Menunggu", tglInput: "2026-05-20", replikasi: 0 },
+      { id: 3, nama: "Bantuan Beasiswa Tepat Sasaran", jenis: "Non Digital", bentuk: "Tata Kelola", urusan: "Pendidikan", deskripsi: "Sistem penyaluran beasiswa", status: "Terverifikasi", tglInput: "2026-01-15", replikasi: 2 }
+    ];
+
+    // Fungsi menyimpan ke localStorage
+    function saveInovasi() {
+      localStorage.setItem(`inovasi_${currentOPD.id}`, JSON.stringify(inovasiOPD));
+    }
+    function loadInovasi() {
+      const stored = localStorage.getItem(`inovasi_${currentOPD.id}`);
+      if (stored) {
+        inovasiOPD = JSON.parse(stored);
+      } else {
+        saveInovasi();
+      }
+    }
+    loadInovasi();
+
+    // Hitung statistik
+    function updateStats() {
+      const total = inovasiOPD.length;
+      const verified = inovasiOPD.filter(i => i.status === "Terverifikasi").length;
+      const pending = inovasiOPD.filter(i => i.status === "Menunggu").length;
+      const totalReplikasi = inovasiOPD.reduce((sum, i) => sum + (i.replikasi || 0), 0);
+      document.getElementById('myInovasiCount').innerText = total;
+      document.getElementById('verifiedCount').innerText = verified;
+      document.getElementById('pendingCount').innerText = pending;
+      document.getElementById('replikasiCount').innerText = totalReplikasi;
+    }
+
+    // Render tabel inovasi
+    function renderTable(filter = "") {
+      const filtered = inovasiOPD.filter(i => i.nama.toLowerCase().includes(filter.toLowerCase()));
+      const tbody = document.getElementById('inovasiTableBody');
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-gray-400">Belum ada inovasi</td></tr>';
+        return;
+      }
+      tbody.innerHTML = filtered.map(ino => `
+        <tr>
+          <td class="px-5 py-3 text-sm">${ino.nama}</td>
+          <td class="px-5 py-3 text-sm">${ino.jenis}</td>
+          <td class="px-5 py-3"><span class="px-2 py-0.5 rounded-full text-xs ${ino.status === 'Terverifikasi' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">${ino.status}</span></td>
+          <td class="px-5 py-3 text-sm">${ino.tglInput}</td>
+          <td class="px-5 py-3"><button onclick="editInovasi(${ino.id})" class="text-indigo-600 text-sm hover:underline">Detail</button></td>
+        </tr>
+      `).join('');
+    }
+
+    // Chart bentuk inovasi
+    function renderChart() {
+      const bentukCount = { "Tata Kelola":0, "Pelayanan Publik":0, "Lainnya":0 };
+      inovasiOPD.forEach(i => { bentukCount[i.bentuk] = (bentukCount[i.bentuk]||0)+1; });
+      const ctx = document.getElementById('bentukChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: { labels: Object.keys(bentukCount), datasets: [{ data: Object.values(bentukCount), backgroundColor: ['#4f46e5', '#10b981', '#f59e0b'] }] },
+        options: { responsive: true, maintainAspectRatio: true }
+      });
+    }
+
+    // Pemenuhan urusan wajib (Pendidikan, Kesehatan, Sosial, PUPR, Perumahan, Ketenteraman)
+    const urusanWajib = ["Pendidikan", "Kesehatan", "Sosial", "PUPR", "Perumahan", "Ketenteraman"];
+    function renderUrusanStatus() {
+      const urusanTercover = new Set(inovasiOPD.filter(i => i.status === "Terverifikasi").map(i => i.urusan));
+      const container = document.getElementById('urusanList');
+      container.innerHTML = urusanWajib.map(ur => {
+        const covered = urusanTercover.has(ur);
+        return `<div class="flex justify-between items-center"><span>${ur}</span><span class="${covered ? 'text-green-600' : 'text-red-500'}"><i class="fas ${covered ? 'fa-check-circle' : 'fa-times-circle'}"></i> ${covered ? 'Tercapai' : 'Belum'}</span></div>`;
+      }).join('');
+      const coveredCount = urusanWajib.filter(u => urusanTercover.has(u)).length;
+      if (coveredCount < 5) {
+        container.innerHTML += `<div class="text-red-500 text-xs mt-2">⚠️ Skor jumlah inovasi = 0 (minimal 5 urusan dasar terpenuhi)</div>`;
+      } else {
+        container.innerHTML += `<div class="text-green-600 text-xs mt-2">✅ Syarat jumlah inovasi terpenuhi (${coveredCount}/6 urusan)</div>`;
+      }
+    }
+
+    // Modal handling
+    const modal = document.getElementById('inovasiModal');
+    const openBtn = document.getElementById('openModalBtn');
+    const closeModal = () => { modal.style.display = 'none'; modal.style.visibility = 'hidden'; };
+    openBtn.onclick = () => { modal.style.display = 'flex'; modal.style.visibility = 'visible'; };
+    document.getElementById('closeModalBtn').onclick = closeModal;
+    document.getElementById('cancelModal').onclick = closeModal;
+    window.onclick = (e) => { if(e.target === modal) closeModal(); };
+
+    // Form submit tambah inovasi
+    document.getElementById('formInovasi').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nama = document.getElementById('namaInovasi').value.trim();
+      if(!nama) return alert("Nama inovasi wajib diisi");
+      const newId = Date.now();
+      const newInovasi = {
+        id: newId,
+        nama: nama,
+        jenis: document.getElementById('jenisInovasi').value,
+        bentuk: document.getElementById('bentukInovasi').value,
+        urusan: document.getElementById('urusanInovasi').value,
+        deskripsi: document.getElementById('deskripsiInovasi').value,
+        status: "Menunggu",
+        tglInput: new Date().toISOString().slice(0,10),
+        replikasi: 0
+      };
+      inovasiOPD.push(newInovasi);
+      saveInovasi();
+      updateStats();
+      renderTable();
+      renderChart();
+      renderUrusanStatus();
+      closeModal();
+      document.getElementById('formInovasi').reset();
+      alert("Inovasi berhasil dikirim, menunggu validasi admin.");
+      // update notifikasi badge
+      document.getElementById('notifBadge').innerText = inovasiOPD.filter(i => i.status === "Menunggu").length;
+    });
+
+    // Edit / detail simulasi
+    window.editInovasi = (id) => {
+      const ino = inovasiOPD.find(i => i.id === id);
+      alert(`Detail Inovasi:\nNama: ${ino.nama}\nStatus: ${ino.status}\nDeskripsi: ${ino.deskripsi}\nReplikasi: ${ino.replikasi} kali`);
+    };
+
+    // Pencarian
+    document.getElementById('searchInovasi').addEventListener('input', (e) => renderTable(e.target.value));
+
+    // Notifikasi (simulasi)
+    document.getElementById('notifIcon').onclick = () => {
+      const pending = inovasiOPD.filter(i => i.status === "Menunggu").length;
+      alert(`Anda memiliki ${pending} inovasi menunggu validasi.`);
+    };
+
+    // Inisialisasi
+    updateStats();
+    renderTable();
+    renderChart();
+    renderUrusanStatus();
+    document.getElementById('notifBadge').innerText = inovasiOPD.filter(i => i.status === "Menunggu").length;
+  </script>
+</body>
+</html>

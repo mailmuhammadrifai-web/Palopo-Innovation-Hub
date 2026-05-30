@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Dashboard Pimpinan | Palopo Innovation Hub</title>
+  <!-- Tailwind + Font Awesome + Chart.js + Leaflet -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #f0f2f5; }
+    .stat-card { transition: all 0.2s; }
+    .stat-card:hover { transform: translateY(-3px); }
+    .dropdown-menu {
+      transition: opacity 0.2s, visibility 0.2s;
+    }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- Top Navigation dengan Dropdown Profil -->
+  <nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
+    <div class="px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <div class="bg-indigo-600 w-8 h-8 rounded-lg flex items-center justify-center">
+            <i class="fas fa-chart-line text-white text-sm"></i>
+          </div>
+          <span class="font-bold text-gray-800 ml-2">Palopo Innovation Hub</span>
+          <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-0.5 rounded-full ml-3">Dashboard Pimpinan Daerah</span>
+        </div>
+        
+        <!-- Profil Dropdown -->
+        <div class="flex items-center gap-4">
+          <i class="fas fa-download text-gray-500 cursor-pointer hover:text-indigo-600" title="Ekspor Laporan" id="exportBtn"></i>
+          <div class="relative">
+            <button id="profileBtn" class="flex items-center gap-2 focus:outline-none">
+              <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-800 font-bold text-sm">WD</div>
+              <span class="text-sm font-medium text-gray-700 hidden md:block" id="userName">Wali Kota Palopo</span>
+              <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform duration-200" id="chevronIcon"></i>
+            </button>
+            <!-- Dropdown Menu -->
+            <div id="dropdownMenu" class="dropdown-menu absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 py-1 z-30 hidden opacity-0 invisible transition-all duration-200">
+              <a href="#" id="profileLink" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50">
+                <i class="fas fa-user-circle w-5 text-indigo-500"></i> Profil Pimpinan
+              </a>
+              <hr class="my-1">
+              <a href="#" id="logoutLink" class="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                <i class="fas fa-sign-out-alt w-5"></i> Keluar
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    
+    <!-- Header Selamat Datang -->
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-gray-800">Selamat Datang, <span id="namaPimpinan">Bapak Wali Kota</span></h1>
+      <p class="text-gray-500 text-sm">Pantau capaian Indeks Inovasi Daerah (IID) dan kinerja perangkat daerah secara real-time.</p>
+    </div>
+
+    <!-- Kartu Indeks IID & Skor Utama -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+      <div class="bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-xl shadow-lg p-5 text-white stat-card">
+        <div class="flex justify-between items-start">
+          <div><p class="text-indigo-100 text-sm">Indeks IID 2026</p><p class="text-4xl font-bold mt-1" id="iidValue">67.2</p><p class="text-indigo-200 text-xs">Kategori: Sangat Inovatif</p></div>
+          <i class="fas fa-chart-line text-3xl text-indigo-300"></i>
+        </div>
+        <div class="mt-3 text-xs">Target Nasional: 40.00 | Posisi: 8 dari 24 kab/kota</div>
+      </div>
+      <div class="bg-white rounded-xl shadow p-5 border-l-4 border-green-500 stat-card">
+        <div class="text-gray-500 text-sm">Skor SPD (Satuan Pemerintah Daerah)</div>
+        <div class="text-3xl font-bold text-gray-800" id="spdScore">52.3</div>
+        <div class="text-xs text-gray-400 mt-1">Maksimal 63 | Kontribusi 25,2% IID</div>
+        <div class="w-full bg-gray-200 rounded-full h-2 mt-2"><div class="bg-green-500 h-2 rounded-full" style="width: 83%"></div></div>
+      </div>
+      <div class="bg-white rounded-xl shadow p-5 border-l-4 border-blue-500 stat-card">
+        <div class="text-gray-500 text-sm">Skor SID (Sistem Inovasi Daerah)</div>
+        <div class="text-3xl font-bold text-gray-800" id="sidScore">114.7</div>
+        <div class="text-xs text-gray-400 mt-1">Maksimal 187 | Jumlah Inovasi: 187</div>
+        <div class="w-full bg-gray-200 rounded-full h-2 mt-2"><div class="bg-blue-500 h-2 rounded-full" style="width: 61%"></div></div>
+      </div>
+    </div>
+
+    <!-- 3 Inovasi Terbaik & Peta Sebaran -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      <div class="bg-white rounded-xl shadow p-5">
+        <h3 class="font-bold text-gray-700 flex items-center gap-2"><i class="fas fa-trophy text-yellow-500"></i> 3 Inovasi Terbaik Bulan Ini</h3>
+        <div id="top3List" class="mt-3 space-y-3">
+          <!-- Dinamis dari JS -->
+        </div>
+      </div>
+      <div class="bg-white rounded-xl shadow p-5">
+        <h3 class="font-bold text-gray-700 flex items-center gap-2"><i class="fas fa-map-marker-alt text-red-500"></i> Peta Sebaran Inovasi</h3>
+        <div id="mapPreview" style="height: 240px; border-radius: 12px;" class="mt-2 z-0"></div>
+        <p class="text-xs text-gray-400 mt-2 text-center">Titik implementasi inovasi di wilayah Palopo</p>
+      </div>
+    </div>
+
+    <!-- Grafik Tren Inovasi per OPD -->
+    <div class="bg-white rounded-xl shadow p-5 mb-6">
+      <h3 class="font-bold text-gray-700 mb-3"><i class="fas fa-chart-bar text-indigo-500"></i> Tren Jumlah Inovasi per OPD (2026)</h3>
+      <canvas id="opdChart" height="100"></canvas>
+    </div>
+
+    <!-- Tabel Capaian OPD & Rekomendasi -->
+    <div class="bg-white rounded-xl shadow overflow-hidden">
+      <div class="px-5 py-4 border-b flex justify-between items-center">
+        <h3 class="font-bold text-gray-700"><i class="fas fa-building"></i> Capaian Inovasi per Perangkat Daerah (OPD)</h3>
+        <button id="exportExcelBtn" class="text-indigo-600 text-sm hover:underline"><i class="fas fa-file-excel"></i> Ekspor Excel</button>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-5 py-3 text-left text-xs font-medium text-gray-500">OPD</th>
+              <th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Jml Inovasi</th>
+              <th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Terverifikasi</th>
+              <th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Rata-rata Skor Manfaat</th>
+              <th class="px-5 py-3 text-left text-xs font-medium text-gray-500">Status Urusan Dasar</th>
+            </tr>
+          </thead>
+          <tbody id="opdTableBody" class="divide-y divide-gray-100">
+            <!-- data dari JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-6 text-center text-xs text-gray-400 border-t pt-4">© 2026 Palopo Innovation Hub - Data IID diperbarui secara otomatis | Dashboard Pimpinan Daerah</div>
+  </main>
+
+  <script>
+    // Data simulasi IID
+    const iidData = { iid: 67.2, spd: 52.3, sid: 114.7, kategori: "Sangat Inovatif" };
+    document.getElementById('iidValue').innerText = iidData.iid;
+    document.getElementById('spdScore').innerText = iidData.spd;
+    document.getElementById('sidScore').innerText = iidData.sid;
+
+    // Top 3 Inovasi
+    const topInnovations = [
+      { name: "SIPAKATAU - Sistem Informasi Pendidikan", opd: "Dinas Pendidikan", score: 94.5, benefit: "Akses data real-time, putus sekolah turun 18%" },
+      { name: "Layanan Sehat Palopo (LSP)", opd: "Dinas Kesehatan", score: 92.3, benefit: "Telemedicine, 30rb+ pengguna aktif" },
+      { name: "SIMLING Pengaduan Masyarakat", opd: "Diskominfo", score: 91.0, benefit: "Tingkat penyelesaian aduan 89%" }
+    ];
+    const topContainer = document.getElementById('top3List');
+    topContainer.innerHTML = topInnovations.map((ino, idx) => `
+      <div class="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
+        <div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center font-bold text-yellow-700">${idx+1}</div>
+        <div class="flex-1"><p class="font-medium text-gray-800">${ino.name}</p><p class="text-xs text-gray-500">${ino.opd} | Skor manfaat: ${ino.score}</p></div>
+        <i class="fas fa-star text-yellow-400"></i>
+      </div>
+    `).join('');
+
+    // Peta sebaran (Leaflet)
+    const map = L.map('mapPreview').setView([-2.9925, 120.1969], 12);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
+    const markers = [
+      [-2.9925, 120.1969, "SIPAKATAU (Pendidikan)"],
+      [-3.0005, 120.2050, "LSP (Kesehatan)"],
+      [-2.9850, 120.1890, "E-Tata Bangunan (PUPR)"],
+      [-2.9990, 120.1995, "Palopo Satu Data (Sosial)"],
+      [-2.9770, 120.2100, "ASRI (Lingkungan)"]
+    ];
+    markers.forEach(m => L.marker([m[0], m[1]]).addTo(map).bindPopup(`<b>${m[2]}</b>`));
+
+    // Grafik OPD
+    const opdLabels = ["Dinas Pendidikan", "Dinas Kesehatan", "DPUPR", "Bappeda", "Diskominfo", "Dinas Sosial"];
+    const inovasiCounts = [12, 9, 7, 5, 8, 4];
+    const ctx = document.getElementById('opdChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: { labels: opdLabels, datasets: [{ label: 'Jumlah Inovasi', data: inovasiCounts, backgroundColor: '#4f46e5', borderRadius: 6 }] },
+      options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'top' } } }
+    });
+
+    // Tabel capaian OPD
+    const opdPerformance = [
+      { opd: "Dinas Pendidikan", total: 12, verified: 11, avgManfaat: 86.4, urusanStatus: "✅ 5/6" },
+      { opd: "Dinas Kesehatan", total: 9, verified: 9, avgManfaat: 88.2, urusanStatus: "✅ 5/6" },
+      { opd: "DPUPR", total: 7, verified: 6, avgManfaat: 79.5, urusanStatus: "⚠️ 4/6" },
+      { opd: "Bappeda", total: 5, verified: 5, avgManfaat: 84.1, urusanStatus: "✅ 5/6" },
+      { opd: "Diskominfo", total: 8, verified: 7, avgManfaat: 82.7, urusanStatus: "✅ 5/6" },
+      { opd: "Dinas Sosial", total: 4, verified: 4, avgManfaat: 80.0, urusanStatus: "⚠️ 3/6" }
+    ];
+    const tableBody = document.getElementById('opdTableBody');
+    tableBody.innerHTML = opdPerformance.map(opd => `
+      <tr class="hover:bg-gray-50">
+        <td class="px-5 py-3 text-sm font-medium">${opd.opd}</td>
+        <td class="px-5 py-3 text-sm">${opd.total}</td>
+        <td class="px-5 py-3 text-sm">${opd.verified}</td>
+        <td class="px-5 py-3 text-sm">${opd.avgManfaat}</td>
+        <td class="px-5 py-3 text-sm">${opd.urusanStatus}</td>
+      </tr>
+    `).join('');
+
+    // ========================
+    // DROPDOWN PROFIL & KELUAR
+    // ========================
+    const profileBtn = document.getElementById('profileBtn');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    const chevronIcon = document.getElementById('chevronIcon');
+
+    function toggleDropdown() {
+      const isHidden = dropdownMenu.classList.contains('hidden');
+      if (isHidden) {
+        dropdownMenu.classList.remove('hidden', 'opacity-0', 'invisible');
+        dropdownMenu.classList.add('opacity-100', 'visible');
+        chevronIcon.style.transform = 'rotate(180deg)';
+      } else {
+        dropdownMenu.classList.add('hidden', 'opacity-0', 'invisible');
+        dropdownMenu.classList.remove('opacity-100', 'visible');
+        chevronIcon.style.transform = 'rotate(0deg)';
+      }
+    }
+
+    profileBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleDropdown();
+    });
+
+    // Tutup dropdown jika klik di luar
+    document.addEventListener('click', function(event) {
+      if (!profileBtn.contains(event.target) && !dropdownMenu.contains(event.target)) {
+        if (!dropdownMenu.classList.contains('hidden')) {
+          dropdownMenu.classList.add('hidden', 'opacity-0', 'invisible');
+          dropdownMenu.classList.remove('opacity-100', 'visible');
+          chevronIcon.style.transform = 'rotate(0deg)';
+        }
+      }
+    });
+
+    // Aksi Profil Pimpinan
+    document.getElementById('profileLink').addEventListener('click', (e) => {
+      e.preventDefault();
+      // Simulasi menampilkan profil (bisa dibuat modal atau halaman terpisah)
+      alert("Profil Pimpinan Daerah\n\nNama: Dr. H. Akhmad, M.Si\nJabatan: Wali Kota Palopo\nPeriode: 2021-2026\nEmail: walikota@palopokota.go.id\n\n(Fitur profil dapat dikembangkan lebih lanjut)");
+      dropdownMenu.classList.add('hidden', 'opacity-0', 'invisible');
+      chevronIcon.style.transform = 'rotate(0deg)';
+    });
+
+    // Aksi Keluar (Logout)
+    document.getElementById('logoutLink').addEventListener('click', (e) => {
+      e.preventDefault();
+      // Hapus sessionStorage dan redirect ke login
+      sessionStorage.removeItem('loggedInUser');
+      window.location.href = 'login.html';
+    });
+
+    // Ekspor Excel (simulasi)
+    document.getElementById('exportExcelBtn').addEventListener('click', () => {
+      alert("Simulasi ekspor data OPD ke Excel. Pada implementasi nyata, file akan diunduh.");
+    });
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      alert("Fitur ekspor laporan lengkap IID dan capaian OPD.");
+    });
+
+    // Ambil data user dari sessionStorage (jika ada)
+    const userData = sessionStorage.getItem('loggedInUser');
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        if (user.name) {
+          document.getElementById('namaPimpinan').innerText = user.name;
+          document.getElementById('userName').innerText = user.name;
+          // update inisial
+          const initial = user.name.charAt(0);
+          const initialDiv = document.querySelector('#profileBtn .rounded-full');
+          if (initialDiv) initialDiv.innerText = initial.toUpperCase();
+        }
+      } catch(e) {}
+    }
+
+    // Perbaikan responsif peta saat resize
+    window.addEventListener('resize', () => {
+      setTimeout(() => map.invalidateSize(), 100);
+    });
+  </script>
+</body>
+</html>

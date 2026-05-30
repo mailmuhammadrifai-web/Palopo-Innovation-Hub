@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Palopo Innovation Hub 2026 | Inovasi untuk Palopo Maju</title>
+    <!-- Google Fonts + Leaflet CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+            color: #0a2540;
+            line-height: 1.5;
+            scroll-behavior: smooth;
+        }
+
+        /* warna biru putih : #0a2540 (biru gelap), #0066cc (biru terang), #f0f7ff (biru sangat muda) */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* navbar */
+        .navbar {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.03);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(0px);
+            border-bottom: 1px solid #eef2f6;
+        }
+        .nav-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            flex-wrap: wrap;
+        }
+        .logo h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0a2540 0%, #0066cc 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+            margin-left: 26px;
+        }
+        .logo p {
+            font-size: 0.80rem;
+            color: #5b6e8c;
+            font-weight: 500;
+            margin-left: 26px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            text-decoration: none;
+            font-weight: 600;
+            color: #1f3a5f;
+            transition: 0.2s;
+        }
+        .nav-links a:hover {
+            color: #0066cc;
+        }
+        .btn-login {
+            background: #0a2540;
+            color: white !important;
+            padding: 8px 20px;
+            border-radius: 40px;
+            transition: 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            margin-right: 26px;
+        }
+        .btn-login:hover {
+            background: #0066cc;
+            transform: translateY(-1px);
+        }
+
+        /* button umum */
+        .btn-primary {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .btn-primary:hover {
+            background: #0a2540;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -8px rgba(0,102,204,0.3);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #0066cc;
+            color: #0066cc;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            transition: 0.2s;
+            text-decoration: none;
+        }
+        .btn-outline:hover {
+            background: #0066cc10;
+            border-color: #0a2540;
+            color: #0a2540;
+        }
+
+        /* hero */
+        .hero {
+            padding: 60px 0 48px;
+            background: linear-gradient(145deg, #ffffff 0%, #f5faff 100%);
+        }
+        .hero-grid {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 48px;
+        }
+        .hero-text {
+            flex: 1;
+        }
+        .hero-text h1 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #0a2540, #0066cc);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .hero-text p {
+            font-size: 1.2rem;
+            color: #2c3e5c;
+            margin-bottom: 32px;
+        }
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .hero-stats {
+            flex: 0.8;
+            background: white;
+            border-radius: 32px;
+            padding: 28px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,102,204,0.15);
+        }
+
+        /* section umum */
+        .section {
+            padding: 64px 0;
+        }
+        .section-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            text-align: center;
+            color: #0a2540;
+        }
+        .section-sub {
+            text-align: center;
+            color: #5b6e8c;
+            max-width: 680px;
+            margin: 0 auto 48px;
+        }
+
+        /* 3 inovasi terbaik */
+        .card-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+            justify-content: center;
+        }
+        .inovasi-card {
+            background: white;
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 12px 24px -12px rgba(0,0,0,0.1);
+            flex: 1;
+            min-width: 260px;
+            transition: all 0.25s;
+            border: 1px solid #eef2fa;
+        }
+        .inovasi-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 24px 36px -16px rgba(0,102,204,0.2);
+        }
+        .card-img {
+            height: 180px;
+            background: #eef2ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #0066cc;
+        }
+        .card-content {
+            padding: 20px;
+        }
+        .badge {
+            background: #e6f2ff;
+            color: #0066cc;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+        .card-content h3 {
+            font-size: 1.35rem;
+            margin-bottom: 8px;
+        }
+        .card-content p {
+            color: #4a5b7a;
+            font-size: 0.9rem;
+        }
+
+        /* peta */
+        .map-wrapper {
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 20px 30px -12px rgba(0,0,0,0.1);
+            border: 1px solid #e2eaf5;
+            height: 380px;
+        }
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        /* statistik akses cepat */
+        .stats-row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 24px;
+            margin: 40px 0 32px;
+        }
+        .stat-card {
+            background: #f8fcff;
+            flex: 1;
+            text-align: center;
+            padding: 28px 12px;
+            border-radius: 32px;
+            transition: 0.2s;
+            border: 1px solid #dce5f0;
+        }
+        .stat-number {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #0066cc;
+        }
+        .quick-access {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .quick-item {
+            background: white;
+            border: 1px solid #cddfed;
+            border-radius: 60px;
+            padding: 12px 28px;
+            font-weight: 600;
+            text-decoration: none;
+            color: #0a2540;
+            transition: all 0.2s;
+        }
+        .quick-item:hover {
+            background: #0066cc;
+            color: white;
+            border-color: #0066cc;
+            transform: translateY(-2px);
+        }
+
+        /* footer */
+        footer {
+            background: #0a2540;
+            color: #cbdff2;
+            padding: 48px 0 24px;
+            margin-top: 32px;
+        }
+        .footer-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+        .footer-col p, .footer-col a {
+            color: #bcd0e8;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-flex {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .hero-text h1 {
+                font-size: 2.2rem;
+            }
+            .section-title {
+                font-size: 1.8rem;
+            }
+            .hero-grid {
+                flex-direction: column;
+            }
+            .stats-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="container nav-flex">
+        <div class="logo">
+            <h1>Palopo Innovation Hub</h1>
+            <p>Ekosistem Inovasi Daerah 2026</p>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Beranda</a>
+            <a href="bank-inovasi.html">Bank Inovasi</a>
+            <a href="peta-sebaran.html">Peta Sebaran</a>
+            <a href="e-bimtek.html">E-Bimtek</a>
+            <a href="panduan.html">Panduan</a>
+            <a href="faq.html">FAQ</a>
+            <a href="login.html" class="btn-login">Login OPD/Admin</a>
+        </div>
+    </div>
+</nav>
+
+<main>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-grid">
+            <div class="hero-text">
+                <h1>Inovasi untuk <br>Palopo Maju</h1>
+                <p>Platform digital terintegrasi untuk mengelola, memonitor, & mengembangkan inovasi daerah. Akses publik tanpa login — transparansi & kolaborasi untuk Palopo lebih baik.</p>
+                <div class="hero-buttons">
+                    <a href="#bank" class="btn-primary">✨ Jelajahi Inovasi</a>
+                    <a href="#" class="btn-outline">📊 Indeks IGA 2026</a>
+                </div>
+            </div>
+            <div class="hero-stats">
+                <div style="font-weight: 700; margin-bottom: 12px;">Palopo Inovasi Kilas</div>
+                <div class="stat-number" style="font-size: 2rem;" id="statJumlah">147</div>
+                <div>Total Inovasi Tervalidasi</div>
+                <hr style="margin: 16px 0; background: #e0e9f2;">
+                <div><span class="stat-number" style="font-size: 1.6rem;" id="statOPD">22</span> OPD Aktif</div>
+                <div><span class="stat-number" style="font-size: 1.6rem;" id="statHKI">9</span> HKI Terdaftar</div>
+                <div style="margin-top: 16px; font-size:0.85rem; background:#eef4fc; padding: 8px; border-radius: 20px;">🏆 Target IID 2026: Sangat Inovatif</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3 Inovasi Terbaik Bulanan -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">🏅 Inovasi Terbaik Bulan Ini</h2>
+            <p class="section-sub">Dipilih berdasarkan kualitas, kemanfaatan, dan dampak nyata bagi masyarakat Palopo</p>
+            <div class="card-grid" id="inovasiTerbaikContainer">
+                <!-- diisi javascript dinamis -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Peta Sebaran Inovasi (interaktif) -->
+    <section class="section" id="peta" style="padding-top: 0;">
+        <div class="container">
+            <h2 class="section-title">🗺️ Peta Sebaran Inovasi</h2>
+            <p class="section-sub">Titik lokasi implementasi inovasi dari berbagai OPD dan desa (klik pin untuk ringkasan)</p>
+            <div class="map-wrapper">
+                <div id="map"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistik & modul akses cepat -->
+    <section class="section" id="bank">
+        <div class="container">
+            <h2 class="section-title">📌 Akses Cepat Modul Publik</h2>
+            <div class="quick-access">
+                <a href="#" class="quick-item">📚 Bank Inovasi</a>
+                <a href="#" class="quick-item">🎓 E-Bimtek</a>
+                <a href="#" class="quick-item">📘 Panduan & SOP</a>
+                <a href="#" class="quick-item">❓ FAQ & Bantuan</a>
+                <a href="#" class="quick-item">🏅 HKI Terdaftar</a>
+            </div>
+            <div class="stats-row">
+                <div class="stat-card"><div class="stat-number">200+</div><div>Target Inovasi Nasional</div></div>
+                <div class="stat-card"><div class="stat-number">6</div><div>Urusan Wajib Tercover</div></div>
+                <div class="stat-card"><div class="stat-number">15+</div><div>Indikator SPD Terpenuhi</div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- bagian e-bimtek preview -->
+    <section class="section" id="bimtek" style="background: #f9fdff;">
+        <div class="container">
+            <h2 class="section-title">🎥 Pusat Pembelajaran Inovasi (E-Bimtek)</h2>
+            <p class="section-sub">Video tutorial, webinar, dan modul gratis untuk publik & OPD (sertifikat bagi yang login)</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 24px; justify-content: center;">
+                <div style="background: white; border-radius: 24px; padding: 20px; flex:1; min-width: 200px;"><strong>📹 Cara Input Inovasi</strong><br>Video panduan rancang bangun</div>
+                <div style="background: white; border-radius: 24px; padding: 20px; flex:1;"><strong>📘 Modul IGA 2026</strong><br>Download PDF Pedoman Terbaru</div>
+                <div style="background: white; border-radius: 24px; padding: 20px; flex:1;"><strong>🔗 Webinar HKI</strong><br>Jadwal 15 Des 2026</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Panduan & FAQ preview -->
+    <section class="section" id="panduan">
+        <div class="container">
+            <div style="display: flex; flex-wrap: wrap; gap: 40px;">
+                <div style="flex:1">
+                    <h3>📄 Panduan Lengkap</h3>
+                    <ul style="margin-top: 16px; list-style: none;">
+                        <li>✓ Pedoman Umum IGA 2026</li>
+                        <li>✓ SOP Pengisian Profil Inovasi</li>
+                        <li>✓ Template Rancang Bangun</li>
+                        <li>✓ User Manual Website</li>
+                    </ul>
+                    <a href="#" class="btn-outline" style="margin-top: 20px; display: inline-block;">Unduh Semua PDF</a>
+                </div>
+                <div style="flex:1" id="faq">
+                    <h3>❓ Pertanyaan Umum (FAQ)</h3>
+                    <div style="margin-top: 16px;">
+                        <details><summary>Apa kriteria inovasi yang bisa diinput?</summary>Inovasi harus diterapkan minimal 2024-2025, mencakup urusan dasar, dan memiliki rancang bangun.</details>
+                        <details><summary>Bagaimana cara mengikuti lomba inovasi?</summary>Login sebagai OPD/masyarakat terdaftar, upload proposal di menu Lomba.</details>
+                        <details><summary>Apakah masyarakat bisa mengajukan replikasi?</summary>Replikasi hanya dapat diajukan oleh OPD yang telah login.</details>
+                    </div>
+                    <a href="#" class="btn-primary" style="margin-top: 24px; background:#0a2540;">Kirim Pertanyaan Publik →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-col"><strong>Palopo Innovation Hub</strong><br>Bappeda Kota Palopo 2026<br>Ekosistem Inovasi Daerah</div>
+            <div class="footer-col"><strong>Kontak</strong><br>📧 inovasi@palopokota.go.id<br>📞 (0471) 321xxx</div>
+            <div class="footer-col"><strong>Link Terkait</strong><br>Kemenkumham<br>Kemendagri IGA<br>Bank HKI Daerah</div>
+        </div>
+        <hr style="border-color:#1e3a5f;">
+        <p style="text-align: center; font-size: 0.8rem; margin-top: 24px;">© 2026 Palopo Innovation Hub — Transparansi inovasi untuk masyarakat</p>
+    </div>
+</footer>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    // Data contoh 3 inovasi terbaik
+    const inovasiList = [
+        { nama: "SIMANTAP (Sistem Informasi Pelayanan Terpadu)", opd: "Dinas Kominfo", manfaat: "Akses layanan perizinan digital, pengaduan realtime", thumbnail: "📱", badge: "Digital & Tata Kelola" },
+        { nama: "Kampung Iklim Cerdas", opd: "DLH", manfaat: "Reduksi emisi & bank sampah berbasis komunitas", thumbnail: "🌿", badge: "Inovasi Lingkungan" },
+        { nama: "E-Posyandu LAYAK", opd: "Dinas Kesehatan", manfaat: "Monitoring stunting & imunisasi digital", thumbnail: "❤️", badge: "Pelayanan Publik" }
+    ];
+
+    function renderInovasi() {
+        const container = document.getElementById('inovasiTerbaikContainer');
+        if(container) {
+            container.innerHTML = inovasiList.map(inov => `
+                <div class="inovasi-card">
+                    <div class="card-img">${inov.thumbnail} </div>
+                    <div class="card-content">
+                        <span class="badge">${inov.badge}</span>
+                        <h3>${inov.nama}</h3>
+                        <p>${inov.opd} — ${inov.manfaat.substring(0, 70)}...</p>
+                        <div style="margin-top: 14px; font-size:0.8rem; color:#0066cc;">🏆 Terbaik Bulan Ini</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+    renderInovasi();
+
+    // Peta dengan Leaflet (titik koordinat inovasi contoh Palopo)
+    function initMap() {
+        // Koordinat pusat Kota Palopo (Sekitar -2.991, 120.196)
+        var map = L.map('map').setView([-2.991, 120.196], 12);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> & CartoDB',
+            subdomains: 'abcd',
+            maxZoom: 18
+        }).addTo(map);
+
+        // contoh titik inovasi
+        var inovasiPoints = [
+            { nama: "SIMANTAP", lat: -2.9918, lng: 120.198, opd: "Kominfo", manfaat: "digitalisasi perizinan" },
+            { nama: "Kampung Iklim", lat: -2.978, lng: 120.215, opd: "DLH", manfaat: "bank sampah & mitigasi" },
+            { nama: "E-Posyandu LAYAK", lat: -2.999, lng: 120.182, opd: "Dinkes", manfaat: "pencegahan stunting" },
+            { nama: "Sistem Informasi Desa", lat: -3.005, lng: 120.170, opd: "DPMD", manfaat: "layanan desa digital" }
+        ];
+
+        inovasiPoints.forEach(point => {
+            var marker = L.marker([point.lat, point.lng]).addTo(map);
+            marker.bindPopup(`
+                <b>${point.nama}</b><br>
+                OPD: ${point.opd}<br>
+                Manfaat: ${point.manfaat}<br>
+                <small>Klik untuk detail lebih lanjut</small>
+            `);
+        });
+    }
+
+    // jalankan map jika elemen ada
+    if(document.getElementById('map')){
+        initMap();
+    }
+
+    // update statistik dinamis (contoh efek animasi)
+    const statJumlah = document.getElementById('statJumlah');
+    const statOPD = document.getElementById('statOPD');
+    const statHKI = document.getElementById('statHKI');
+    if(statJumlah){
+        let count = 0;
+        const target = 147;
+        let interval = setInterval(() => {
+            if(count >= target) clearInterval(interval);
+            else { count += Math.ceil(target/40); if(count>target) count=target; statJumlah.innerText = count; }
+        }, 25);
+    }
+    if(statOPD) statOPD.innerText = '22';
+    if(statHKI) statHKI.innerText = '9';
+</script>
+</body>
+</html>

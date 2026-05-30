@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>FAQ & Dukungan | Palopo Innovation Hub</title>
+  <!-- Tailwind CSS + Font Awesome + Google Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+                  /* navbar */
+        .navbar {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.03);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(0px);
+            border-bottom: 1px solid #eef2f6;
+        }
+        .nav-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            flex-wrap: wrap;
+        }
+        .logo h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0a2540 0%, #0066cc 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+            margin-left: 26px;
+        }
+        .logo p {
+            font-size: 0.80rem;
+            color: #5b6e8c;
+            font-weight: 500;
+            margin-left: 26px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            text-decoration: none;
+            font-weight: 600;
+            color: #1f3a5f;
+            transition: 0.2s;
+        }
+        .nav-links a:hover {
+            color: #0066cc;
+        }
+        .btn-login {
+            background: #0a2540;
+            color: white !important;
+            padding: 8px 20px;
+            border-radius: 40px;
+            transition: 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            margin-right: -47px;
+        }
+        .btn-login:hover {
+            background: #0066cc;
+            transform: translateY(-1px);
+        }
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #f8fafc; }
+    .faq-card {
+      transition: all 0.2s ease;
+    }
+    .faq-card:hover {
+      background-color: #f9fafb;
+    }
+    .answer-collapse {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+    }
+    .answer-collapse.open {
+      max-height: 500px;
+      transition: max-height 0.4s ease-in;
+    }
+    .rotate-180 {
+      transform: rotate(180deg);
+    }
+  </style>
+</head>
+<body class="antialiased">
+  <nav class="navbar">
+    <div class="container nav-flex">
+        <div class="logo">
+            <h1>Palopo Innovation Hub</h1>
+            <p>Ekosistem Inovasi Daerah 2026</p>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Beranda</a>
+            <a href="bank-inovasi.html">Bank Inovasi</a>
+            <a href="peta-sebaran.html">Peta Sebaran</a>
+            <a href="e-bimtek.html">E-Bimtek</a>
+            <a href="panduan.html">Panduan</a>
+            <a href="faq.html">FAQ</a>
+            <a href="login.html" class="btn-login">Login OPD/Admin</a>
+        </div>
+    </div>
+</nav>
+
+  <!-- Hero -->
+  <div class="bg-gradient-to-r from-indigo-700 to-indigo-500 text-white py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-bold flex items-center gap-2"><i class="fas fa-life-ring"></i> Frequently Asked Questions</h2>
+      <p class="text-indigo-100 mt-1 max-w-2xl">Temukan jawaban atas pertanyaan umum seputar inovasi daerah, penggunaan website, kebijakan replikasi, HKI, dan jadwal penilaian IGA 2026.</p>
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Search & Filter -->
+    <div class="bg-white rounded-xl shadow-sm p-5 mb-8 border border-gray-200">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-1"><i class="fas fa-search mr-1"></i> Cari pertanyaan</label>
+          <input type="text" id="searchFaq" placeholder="Kata kunci: login, inovasi, HKI, replikasi, lomba..." class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1"><i class="fas fa-filter mr-1"></i> Kategori</label>
+          <select id="categoryFilter" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white">
+            <option value="all">Semua Kategori</option>
+            <option value="Akun & Login">Akun & Login</option>
+            <option value="Kriteria Inovasi">Kriteria Inovasi</option>
+            <option value="Pengisian & Validasi">Pengisian & Validasi</option>
+            <option value="Replikasi & HKI">Replikasi & HKI</option>
+            <option value="Penilaian IGA">Penilaian IGA</option>
+            <option value="Lomba & Monev">Lomba & Monev</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex justify-end mt-3">
+        <button id="resetFilterBtn" class="text-sm text-gray-500 hover:text-indigo-600"><i class="fas fa-undo-alt mr-1"></i> Reset filter</button>
+      </div>
+    </div>
+
+    <!-- Jumlah hasil -->
+    <div class="flex justify-between items-center mb-4">
+      <p class="text-sm text-gray-500"><i class="fas fa-question-circle mr-1"></i> <span id="resultCount">0</span> pertanyaan ditemukan</p>
+      <p class="text-xs text-gray-400">Terakhir diperbarui: Mei 2026</p>
+    </div>
+
+    <!-- Daftar FAQ (accordion) -->
+    <div id="faqContainer" class="space-y-3">
+      <!-- FAQ items akan diisi javascript -->
+    </div>
+
+    <!-- Pesan jika tidak ada hasil -->
+    <div id="noResultMsg" class="hidden text-center py-12 bg-white rounded-xl mt-4">
+      <i class="fas fa-question-circle text-gray-300 text-5xl mb-3"></i>
+      <p class="text-gray-500">Tidak ada pertanyaan yang sesuai dengan pencarian Anda.</p>
+      <p class="text-sm text-gray-400 mt-1">Silakan kirim pertanyaan melalui formulir di bawah ini.</p>
+    </div>
+
+    <!-- Formulir Kirim Pertanyaan (Tiket Dukungan) -->
+    <div class="mt-12 bg-white rounded-2xl shadow-md border border-gray-200 p-6">
+      <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2"><i class="fas fa-paper-plane text-indigo-500"></i> Tidak menemukan jawaban?</h3>
+      <p class="text-gray-600 text-sm mb-4">Kirim pertanyaan Anda ke admin. Kami akan merespon melalui email dalam 2x24 jam.</p>
+      <form id="supportForm">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nama lengkap</label>
+            <input type="text" id="ticketName" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Contoh: Budi Santoso">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email (untuk balasan)</label>
+            <input type="email" id="ticketEmail" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500" placeholder="budi@palopokota.go.id">
+          </div>
+        </div>
+        <div class="mt-3">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Instansi / OPD (jika ada)</label>
+          <input type="text" id="ticketInstansi" class="w-full border border-gray-300 rounded-lg px-4 py-2" placeholder="Dinas Pendidikan / Masyarakat Umum">
+        </div>
+        <div class="mt-3">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Pertanyaan / Topik</label>
+          <select id="ticketTopic" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+            <option value="Akun & Login">Akun & Login</option>
+            <option value="Kriteria Inovasi">Kriteria Inovasi</option>
+            <option value="Pengisian & Validasi">Pengisian & Validasi</option>
+            <option value="Replikasi & HKI">Replikasi & HKI</option>
+            <option value="Penilaian IGA">Penilaian IGA</option>
+            <option value="Lomba & Monev">Lomba & Monev</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+        <div class="mt-3">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Pertanyaan detail</label>
+          <textarea id="ticketMessage" rows="3" required class="w-full border border-gray-300 rounded-lg px-4 py-2" placeholder="Jelaskan pertanyaan atau kendala Anda secara spesifik..."></textarea>
+        </div>
+        <div class="mt-4 flex justify-end">
+          <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg transition text-sm font-medium"><i class="fas fa-paper-plane mr-1"></i> Kirim Pertanyaan</button>
+        </div>
+      </form>
+      <div id="formFeedback" class="mt-3 text-sm hidden"></div>
+    </div>
+
+    <!-- Informasi kontak tambahan -->
+    <div class="mt-6 text-center text-xs text-gray-400">
+      <i class="fas fa-envelope"></i> support@palopoinovation.id &nbsp;|&nbsp; <i class="fab fa-whatsapp"></i> +62 821 2345 6789 (Jam kerja)
+    </div>
+  </main>
+
+  <footer class="border-t border-gray-200 bg-white mt-12 py-6 text-center text-sm text-gray-500">
+    <div class="max-w-7xl mx-auto px-4">© 2026 Palopo Innovation Hub - Tim dukungan siap membantu | Jadwal IGA 2026: penilaian akhir November</div>
+  </footer>
+
+  <script>
+    // Data FAQ
+    const faqData = [
+      { id: 1, question: "Bagaimana cara mendaftar dan login ke website Palopo Innovation Hub?", answer: "Setiap pengguna (OPD, masyarakat) harus melakukan registrasi melalui tombol 'Daftar' di halaman utama. Masukkan email instansi/ pribadi, buat password, lalu verifikasi melalui email. Untuk OPD, admin akan mengaktifkan akses setelah verifikasi surat tugas. Login menggunakan email dan password.", category: "Akun & Login" },
+      { id: 2, question: "Apa kriteria inovasi yang bisa diinput ke dalam sistem?", answer: "Inovasi harus memenuhi: (1) Minimal mencakup 5 dari 6 urusan wajib pelayanan dasar (Pendidikan, Kesehatan, Sosial, PUPR, Perumahan, Ketenteraman), (2) Diterapkan antara 1 Januari 2024 – 31 Desember 2025 (untuk penilaian IGA 2026), (3) Memiliki rancang bangun minimal 300 kata, unggah minimal 1 foto dan 1 video durasi ≤5 menit.", category: "Kriteria Inovasi" },
+      { id: 3, question: "Bagaimana jika saya mendapatkan error saat mengisi formulir inovasi?", answer: "Pastikan semua kolom wajib (ditandai *) terisi, unggahan video dan foto sesuai format. Jika error berlanjut, coba hapus cache browser atau gunakan mode incognito. Laporkan ke admin melalui tiket dukungan di halaman ini.", category: "Pengisian & Validasi" },
+      { id: 4, question: "Apa kebijakan replikasi inovasi? Bisakah OPD lain meniru inovasi yang sudah ada?", answer: "Ya, fitur 'Replikasi ke Saya' memungkinkan OPD lain mengajukan permohonan replikasi ke pemilik inovasi. Pemilik dapat menyetujui atau menolak. Replikasi wajib menyebutkan sumber inovasi asli dan tidak melanggar HKI. Skor replikasi akan dicatat sebagai indikator SID No.33.", category: "Replikasi & HKI" },
+      { id: 5, question: "Bagaimana cara melindungi inovasi dengan Hak Kekayaan Intelektual (HKI)?", answer: "Platform menyediakan modul HKI untuk sosialisasi, pendaftaran merek/paten/hak cipta melalui koneksi ke Kemenkumham, serta pengajuan insentif biaya dari APBD. Anda dapat mengunggah dokumen dan mengikuti alur pendaftaran. Inovator akan mendapat notifikasi masa berlaku HKI.", category: "Replikasi & HKI" },
+      { id: 6, question: "Kapan jadwal penilaian IGA tahun 2026?", answer: "Penilaian Indeks Inovasi Daerah (IID) dilakukan secara bertahap: pengumpulan data inovasi hingga 31 Oktober 2026, validasi November, dan pengumuman hasil akhir Desember 2026. Skor IID dihitung otomatis oleh sistem berdasarkan SPD dan SID.", category: "Penilaian IGA" },
+      { id: 7, question: "Apakah masyarakat umum bisa mengikuti lomba inovasi?", answer: "Ya, masyarakat/inovator eksternal dapat mengikuti lomba inovasi yang dibuka oleh panitia. Pendaftaran dilakukan melalui sub-modul 'Lomba Inovasi' dengan mengunggah proposal sesuai format. Pastikan inovasi sudah diterapkan minimal di tingkat desa/kelurahan.", category: "Lomba & Monev" },
+      { id: 8, question: "Bagaimana cara mengisi laporan monev triwulan?", answer: "OPD yang memiliki inovasi terverifikasi wajib mengisi laporan berkala (triwulan) melalui menu 'Monev Inovasi'. Isi capaian, kendala, dan tindak lanjut. Status (On Track/Perlu Perhatian/Tidak Berjalan) akan ditampilkan di dashboard admin.", category: "Pengisian & Validasi" },
+      { id: 9, question: "Apakah ada batasan jumlah inovasi yang bisa diinput oleh satu OPD?", answer: "Tidak ada batasan. Namun untuk penilaian IGA, skor jumlah inovasi dihitung dengan rumus MIN(n,200) × 0,38, dengan syarat mencakup minimal 5 urusan dasar. Semakin banyak inovasi berkualitas, semakin tinggi skor (maksimal 76).", category: "Kriteria Inovasi" },
+      { id: 10, question: "Lupa password. Bagaimana cara reset?", answer: "Pada halaman login, klik 'Lupa Password'. Masukkan email terdaftar, sistem akan mengirim tautan reset ke email. Ikuti instruksi untuk membuat password baru. Jika email tidak ditemukan, hubungi admin melalui tiket dukungan.", category: "Akun & Login" }
+    ];
+
+    // DOM elements
+    const faqContainer = document.getElementById('faqContainer');
+    const searchInput = document.getElementById('searchFaq');
+    const categorySelect = document.getElementById('categoryFilter');
+    const resetBtn = document.getElementById('resetFilterBtn');
+    const resultSpan = document.getElementById('resultCount');
+    const noResultDiv = document.getElementById('noResultMsg');
+
+    let currentFiltered = [...faqData];
+
+    // Fungsi render FAQ accordion
+    function renderFaq() {
+      const keyword = searchInput.value.trim().toLowerCase();
+      const category = categorySelect.value;
+
+      currentFiltered = faqData.filter(item => {
+        let matchCat = true;
+        if (category !== 'all' && item.category !== category) matchCat = false;
+        let matchSearch = true;
+        if (keyword) {
+          const haystack = (item.question + ' ' + item.answer + ' ' + item.category).toLowerCase();
+          matchSearch = haystack.includes(keyword);
+        }
+        return matchCat && matchSearch;
+      });
+
+      resultSpan.innerText = currentFiltered.length;
+
+      if (currentFiltered.length === 0) {
+        faqContainer.classList.add('hidden');
+        noResultDiv.classList.remove('hidden');
+        return;
+      }
+
+      faqContainer.classList.remove('hidden');
+      noResultDiv.classList.add('hidden');
+
+      faqContainer.innerHTML = currentFiltered.map((faq, idx) => `
+        <div class="faq-card bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+          <button class="faq-question w-full text-left px-5 py-4 flex justify-between items-center hover:bg-gray-50 transition" data-id="${faq.id}">
+            <span class="font-medium text-gray-800 pr-4"><i class="fas fa-question-circle text-indigo-500 mr-2"></i>${faq.question}</span>
+            <i class="fas fa-chevron-down text-gray-400 transition-transform duration-200 chevron-icon" data-id="${faq.id}"></i>
+          </button>
+          <div class="answer-collapse px-5 pb-4" id="answer-${faq.id}">
+            <div class="text-gray-600 text-sm border-t border-gray-100 pt-3 mt-1">
+              <i class="fas fa-reply-all text-indigo-400 mr-2"></i>${faq.answer}
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Attach event listeners untuk accordion
+      document.querySelectorAll('.faq-question').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-id');
+          const answerDiv = document.getElementById(`answer-${id}`);
+          const icon = btn.querySelector('.chevron-icon');
+          answerDiv.classList.toggle('open');
+          icon.classList.toggle('rotate-180');
+        });
+      });
+    }
+
+    // Event listener filter
+    function applyFilters() {
+      renderFaq();
+    }
+
+    searchInput.addEventListener('input', applyFilters);
+    categorySelect.addEventListener('change', applyFilters);
+    resetBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      categorySelect.value = 'all';
+      applyFilters();
+    });
+
+    // Form tiket dukungan (simulasi)
+    const supportForm = document.getElementById('supportForm');
+    const formFeedback = document.getElementById('formFeedback');
+
+    supportForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('ticketName').value.trim();
+      const email = document.getElementById('ticketEmail').value.trim();
+      const instansi = document.getElementById('ticketInstansi').value.trim() || '-';
+      const topic = document.getElementById('ticketTopic').value;
+      const message = document.getElementById('ticketMessage').value.trim();
+
+      if (!name || !email || !message) {
+        showFeedback('Harap isi semua kolom yang wajib (Nama, Email, Pertanyaan).', 'red');
+        return;
+      }
+      if (!email.includes('@')) {
+        showFeedback('Email tidak valid.', 'red');
+        return;
+      }
+
+      // Simulasi pengiriman tiket (ke localStorage atau alert)
+      const ticket = {
+        id: Date.now(),
+        name, email, instansi, topic, message,
+        date: new Date().toLocaleString('id-ID'),
+        status: 'terkirim'
+      };
+      let tickets = JSON.parse(localStorage.getItem('supportTickets') || '[]');
+      tickets.push(ticket);
+      localStorage.setItem('supportTickets', JSON.stringify(tickets));
+
+      showFeedback(`✔️ Tiket dukungan berhasil dikirim! Admin akan membalas ke ${email} dalam 2x24 jam.`, 'green');
+      supportForm.reset();
+      setTimeout(() => formFeedback.classList.add('hidden'), 5000);
+    });
+
+    function showFeedback(msg, color) {
+      formFeedback.textContent = msg;
+      formFeedback.className = `mt-3 text-sm p-2 rounded-lg ${color === 'red' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'} block`;
+      setTimeout(() => {
+        formFeedback.classList.remove('block');
+        formFeedback.classList.add('hidden');
+      }, 5000);
+    }
+
+    // Inisialisasi render
+    renderFaq();
+  </script>
+</body>
+</html>

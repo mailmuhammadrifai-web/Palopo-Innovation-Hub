@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>E-Bimtek | Palopo Innovation Hub</title>
+  <!-- Tailwind + Font Awesome + Google Fonts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+              /* navbar */
+        .navbar {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02), 0 1px 2px rgba(0,0,0,0.03);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(0px);
+            border-bottom: 1px solid #eef2f6;
+        }
+        .nav-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            flex-wrap: wrap;
+        }
+        .logo h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0a2540 0%, #0066cc 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+            margin-left: 26px;
+        }
+        .logo p {
+            font-size: 0.80rem;
+            color: #5b6e8c;
+            font-weight: 500;
+            margin-left: 26px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            text-decoration: none;
+            font-weight: 600;
+            color: #1f3a5f;
+            transition: 0.2s;
+        }
+        .nav-links a:hover {
+            color: #0066cc;
+        }
+        .btn-login {
+            background: #0a2540;
+            color: white !important;
+            padding: 8px 20px;
+            border-radius: 40px;
+            transition: 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            margin-right: -47px;
+        }
+        .btn-login:hover {
+            background: #0066cc;
+            transform: translateY(-1px);
+        }
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #f3f4f6; }
+    .course-card {
+      transition: all 0.2s ease;
+    }
+    .course-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.15);
+    }
+    .progress-ring {
+      transition: stroke-dashoffset 0.5s;
+    }
+    .modal-transition {
+      transition: opacity 0.2s, visibility 0.2s;
+    }
+    .video-container iframe {
+      width: 100%;
+      height: 320px;
+      border-radius: 16px;
+    }
+    @media (max-width: 640px) {
+      .video-container iframe { height: 200px; }
+    }
+  </style>
+</head>
+<body class="antialiased">
+  <nav class="navbar">
+    <div class="container nav-flex">
+        <div class="logo">
+            <h1>Palopo Innovation Hub</h1>
+            <p>Ekosistem Inovasi Daerah 2026</p>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Beranda</a>
+            <a href="bank-inovasi.html">Bank Inovasi</a>
+            <a href="peta-sebaran.html">Peta Sebaran</a>
+            <a href="e-bimtek.html">E-Bimtek</a>
+            <a href="panduan.html">Panduan</a>
+            <a href="faq.html">FAQ</a>
+            <a href="login.html" class="btn-login">Login OPD/Admin</a>
+        </div>
+    </div>
+</nav>
+
+  <!-- Hero -->
+  <div class="bg-gradient-to-r from-indigo-800 to-indigo-600 text-white py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-bold"><i class="fas fa-chalkboard-user mr-2"></i> E-Learning Inovasi Daerah</h2>
+      <p class="text-indigo-100 mt-1 max-w-2xl">Tingkatkan kapasitas SDM inovasi melalui video tutorial, modul interaktif, webinar, dan raih sertifikat digital setelah menyelesaikan kuis.</p>
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Statistik Capaian Pengguna -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3">
+        <div class="bg-indigo-100 rounded-full w-10 h-10 flex items-center justify-center"><i class="fas fa-play-circle text-indigo-600 text-xl"></i></div>
+        <div><p class="text-xs text-gray-500">Video Ditonton</p><p class="font-bold text-lg" id="totalVideoWatched">0</p></div>
+      </div>
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3">
+        <div class="bg-emerald-100 rounded-full w-10 h-10 flex items-center justify-center"><i class="fas fa-file-pdf text-emerald-600 text-xl"></i></div>
+        <div><p class="text-xs text-gray-500">Modul Dibaca</p><p class="font-bold text-lg" id="totalPdfRead">0</p></div>
+      </div>
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3">
+        <div class="bg-amber-100 rounded-full w-10 h-10 flex items-center justify-center"><i class="fas fa-question-circle text-amber-600 text-xl"></i></div>
+        <div><p class="text-xs text-gray-500">Kuis Lulus</p><p class="font-bold text-lg" id="quizPassed">0</p></div>
+      </div>
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center gap-3">
+        <div class="bg-purple-100 rounded-full w-10 h-10 flex items-center justify-center"><i class="fas fa-certificate text-purple-600 text-xl"></i></div>
+        <div><p class="text-xs text-gray-500">Sertifikat</p><p class="font-bold text-lg" id="certificateCount">0</p></div>
+      </div>
+    </div>
+
+    <!-- Daftar Kursus / Modul Pembelajaran -->
+    <h3 class="text-xl font-bold text-slate-800 mb-4 flex items-center"><i class="fas fa-graduation-cap mr-2 text-indigo-600"></i> Materi Bimtek Inovasi</h3>
+    <div id="coursesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Dynamic cards from JS -->
+    </div>
+
+    <!-- Webinar Terjadwal -->
+    <div class="mt-12 bg-white rounded-2xl shadow-sm border border-gray-200 p-5">
+      <div class="flex flex-wrap justify-between items-center border-b pb-3 mb-4">
+        <h3 class="text-xl font-bold text-slate-800"><i class="fas fa-video mr-2 text-red-500"></i> Webinar Terjadwal (Integrasi Zoom)</h3>
+        <span class="text-xs bg-blue-100 text-blue-700 px-3 py-1 rounded-full"><i class="fas fa-calendar-week"></i> Update mingguan</span>
+      </div>
+      <div id="webinarList" class="space-y-3">
+        <!-- Dynamic webinar -->
+      </div>
+    </div>
+
+    <!-- Tombol untuk melihat riwayat sertifikat -->
+    <div class="mt-8 text-right">
+      <button id="viewCertificatesBtn" class="text-indigo-600 bg-indigo-50 px-5 py-2 rounded-xl hover:bg-indigo-100 text-sm font-medium"><i class="fas fa-download mr-1"></i> Lihat Sertifikat Saya</button>
+    </div>
+  </main>
+
+  <!-- Modal Detail Materi (Video + PDF + Kuis) -->
+  <div id="courseModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm modal-transition" style="visibility: hidden;">
+    <div class="bg-white rounded-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div class="sticky top-0 bg-white border-b px-6 py-4 flex justify-between items-center">
+        <h3 class="text-xl font-bold text-slate-800" id="modalCourseTitle">Detail Materi</h3>
+        <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+      </div>
+      <div class="p-6" id="modalCourseContent">
+        <!-- konten dinamis -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Kuis -->
+  <div id="quizModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 modal-transition" style="visibility: hidden;">
+    <div class="bg-white rounded-2xl max-w-2xl w-full mx-4 max-h-[85vh] overflow-y-auto">
+      <div class="sticky top-0 bg-white border-b px-5 py-3 flex justify-between items-center">
+        <h3 class="font-bold text-lg" id="quizTitle">Kuis: </h3>
+        <button id="closeQuizBtn" class="text-gray-500 text-2xl">&times;</button>
+      </div>
+      <div class="p-6" id="quizContent">
+        <!-- soal dinamis -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Sertifikat -->
+  <div id="certModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 modal-transition" style="visibility: hidden;">
+    <div class="bg-white rounded-2xl max-w-2xl w-full mx-4 p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold text-indigo-800"><i class="fas fa-certificate"></i> Sertifikat Digital</h3>
+        <button id="closeCertBtn" class="text-gray-500 text-2xl">&times;</button>
+      </div>
+      <div id="certificateList" class="space-y-3 max-h-96 overflow-y-auto"></div>
+      <div class="mt-4 text-right text-xs text-gray-500">*Sertifikat diberikan setelah menyelesaikan materi & lulus kuis.</div>
+    </div>
+  </div>
+
+  <footer class="border-t border-gray-200 bg-white mt-12 py-6 text-center text-sm text-gray-500">
+    <div class="max-w-7xl mx-auto px-4">© 2026 Palopo Innovation Hub - Indikator SID No.20: Transfer pengetahuan terintegrasi E-Bimtek | Verifikasi sertifikat otomatis</div>
+  </footer>
+
+  <script>
+    // Data kursus: video, pdf, kuis terkait
+    const courses = [
+      { id: 1, title: "Cara Input Inovasi di SIPD", description: "Tutorial lengkap mengisi formulir inovasi daerah.", type: "video", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", pdfUrl: "#", pdfLabel: "Modul Input Inovasi.pdf", hasQuiz: true, quizQuestions: [{ text: "Kolom apa yang wajib diisi pada profil inovasi?", options: ["Nama inovasi", "Anggaran", "Kriteria optional"], correct: 0 },{ text: "Apakah video inovasi wajib diunggah?", options: ["Ya, minimal 1 video", "Tidak", "Hanya foto"], correct: 0 }], progress: false },
+      { id: 2, title: "Menyusun Rancang Bangun Inovasi", description: "Metode & struktur rancang bangun (minimal 300 kata).", type: "video", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", pdfUrl: "#", pdfLabel: "Template Rancang Bangun.pdf", hasQuiz: true, quizQuestions: [{ text: "Rancang bangun harus memuat?", options: ["Dasar hukum, masalah, keunggulan", "Hanya daftar pustaka", "Anggaran saja"], correct: 0 }], progress: false },
+      { id: 3, title: "Membuat Video Inovasi Berkualitas", description: "Tips durasi maks 5 menit, substansi penilaian IGA.", type: "video", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", pdfUrl: "#", pdfLabel: "Pedoman Video Inovasi.pdf", hasQuiz: true, quizQuestions: [{ text: "Durasi maksimal video inovasi?", options: ["3 menit", "5 menit", "10 menit"], correct: 1 }], progress: false },
+      { id: 4, title: "Modul IGA & Indikator Inovasi Daerah", description: "PDF pedoman lengkap IGA 2026.", type: "pdf", pdfUrl: "#", pdfLabel: "Buku_Pedoman_IGA_2026.pdf", hasQuiz: true, quizQuestions: [{ text: "Skor maksimal IID adalah?", options: ["100", "250", "500"], correct: 1 }], progress: false },
+      { id: 5, title: "Hak Kekayaan Intelektual untuk Inovator", description: "Sosialisasi HKI dan pendaftaran merek/paten.", type: "video", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", pdfUrl: "#", pdfLabel: "Panduan HKI Daerah.pdf", hasQuiz: false, progress: false }
+    ];
+
+    // Webinar data
+    const webinars = [
+      { id: 1, topic: "Strategi Peningkatan Indeks Inovasi Daerah", date: "10 Juni 2026, 10:00 WITA", zoomLink: "#", speaker: "Bappeda Provinsi" },
+      { id: 2, topic: "Digitalisasi Layanan Publik Berbasis Inovasi", date: "24 Juni 2026, 13:30 WITA", zoomLink: "#", speaker: "KemenPAN RB" },
+      { id: 3, topic: "Penyusunan Proposal Lomba Inovasi Tingkat Nasional", date: "8 Juli 2026, 09:00 WITA", zoomLink: "#", speaker: "Kemendagri" }
+    ];
+
+    // State untuk progres pengguna (disimpan di localStorage)
+    let userProgress = {
+      watchedVideos: [],    // id kursus video yang sudah ditonton
+      readPdfs: [],         // id kursus pdf yang sudah dibaca
+      quizPassedCourses: [], // id kursus yang sudah lulus kuis
+      certificates: []      // array objek { courseId, courseTitle, date }
+    };
+
+    function loadProgress() {
+      const stored = localStorage.getItem("ebimtek_palopo");
+      if(stored) {
+        userProgress = JSON.parse(stored);
+      } else {
+        // default
+        userProgress = { watchedVideos: [], readPdfs: [], quizPassedCourses: [], certificates: [] };
+      }
+      updateStats();
+    }
+
+    function saveProgress() {
+      localStorage.setItem("ebimtek_palopo", JSON.stringify(userProgress));
+      updateStats();
+      renderCourses(); // refresh status tombol
+    }
+
+    function updateStats() {
+      document.getElementById('totalVideoWatched').innerText = userProgress.watchedVideos.length;
+      document.getElementById('totalPdfRead').innerText = userProgress.readPdfs.length;
+      document.getElementById('quizPassed').innerText = userProgress.quizPassedCourses.length;
+      document.getElementById('certificateCount').innerText = userProgress.certificates.length;
+    }
+
+    // Tandai video selesai
+    function markVideoWatched(courseId) {
+      if(!userProgress.watchedVideos.includes(courseId)) {
+        userProgress.watchedVideos.push(courseId);
+        saveProgress();
+        checkAndAwardCertificate(courseId);
+      }
+    }
+
+    function markPdfRead(courseId) {
+      if(!userProgress.readPdfs.includes(courseId)) {
+        userProgress.readPdfs.push(courseId);
+        saveProgress();
+        checkAndAwardCertificate(courseId);
+      }
+    }
+
+    // Cek apakah suatu kursus sudah eligible untuk sertifikat (video/PDF selesai + kuis lulus jika ada)
+    function isCourseCompleted(course) {
+      const isWatchedOrRead = course.type === 'video' ? userProgress.watchedVideos.includes(course.id) : userProgress.readPdfs.includes(course.id);
+      const quizRequirement = course.hasQuiz ? userProgress.quizPassedCourses.includes(course.id) : true;
+      return isWatchedOrRead && quizRequirement;
+    }
+
+    function checkAndAwardCertificate(courseId) {
+      const course = courses.find(c => c.id === courseId);
+      if(!course) return;
+      if(isCourseCompleted(course) && !userProgress.certificates.some(cert => cert.courseId === courseId)) {
+        // Beri sertifikat
+        const newCert = {
+          courseId: course.id,
+          courseTitle: course.title,
+          date: new Date().toLocaleDateString('id-ID')
+        };
+        userProgress.certificates.push(newCert);
+        saveProgress();
+        alert(`🎉 Selamat! Anda mendapatkan sertifikat untuk "${course.title}". Sertifikat tersimpan dan bisa diunduh nanti.`);
+      }
+    }
+
+    // Membuka modal kuis
+    function openQuiz(course) {
+      if(!course.hasQuiz) return;
+      const modal = document.getElementById('quizModal');
+      const quizTitle = document.getElementById('quizTitle');
+      quizTitle.innerText = `Kuis: ${course.title}`;
+      const container = document.getElementById('quizContent');
+      // Generate form
+      let html = `<div class="space-y-6">`;
+      course.quizQuestions.forEach((q, idx) => {
+        html += `<div><p class="font-medium text-gray-800">${idx+1}. ${q.text}</p>`;
+        html += `<div class="ml-4 mt-2 space-y-1">`;
+        q.options.forEach((opt, optIdx) => {
+          html += `<label class="flex items-center gap-2"><input type="radio" name="q${idx}" value="${optIdx}"> <span>${opt}</span></label>`;
+        });
+        html += `</div></div>`;
+      });
+      html += `<button id="submitQuizBtn" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 mt-4">Submit & Periksa</button></div>`;
+      container.innerHTML = html;
+
+      modal.style.display = 'flex';
+      modal.style.visibility = 'visible';
+      
+      document.getElementById('submitQuizBtn').onclick = () => {
+        let allCorrect = true;
+        course.quizQuestions.forEach((q, idx) => {
+          const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+          if(!selected || parseInt(selected.value) !== q.correct) allCorrect = false;
+        });
+        if(allCorrect) {
+          if(!userProgress.quizPassedCourses.includes(course.id)) {
+            userProgress.quizPassedCourses.push(course.id);
+            saveProgress();
+            alert("✅ Kuis lulus! Sertifikat akan diberikan jika materi sudah ditonton/dibaca.");
+            checkAndAwardCertificate(course.id);
+            closeQuizModal();
+            renderCourses();
+          } else {
+            alert("Anda sudah pernah lulus kuis ini.");
+            closeQuizModal();
+          }
+        } else {
+          alert("❌ Jawaban tidak semua benar. Silakan coba lagi.");
+        }
+      };
+    }
+
+    function closeQuizModal() {
+      const modal = document.getElementById('quizModal');
+      modal.style.display = 'none';
+      modal.style.visibility = 'hidden';
+    }
+
+    // Render daftar kursus
+    function renderCourses() {
+      const container = document.getElementById('coursesContainer');
+      if(!container) return;
+      container.innerHTML = courses.map(course => {
+        const isCompleted = isCourseCompleted(course);
+        const watchedOrRead = course.type === 'video' ? userProgress.watchedVideos.includes(course.id) : userProgress.readPdfs.includes(course.id);
+        const quizDone = course.hasQuiz ? userProgress.quizPassedCourses.includes(course.id) : true;
+        return `
+          <div class="course-card bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden flex flex-col">
+            <div class="h-36 ${course.type === 'video' ? 'bg-indigo-900' : 'bg-emerald-800'} flex items-center justify-center text-white text-4xl">
+              <i class="fas ${course.type === 'video' ? 'fa-video' : 'fa-file-pdf'}"></i>
+            </div>
+            <div class="p-5 flex-1">
+              <h4 class="font-bold text-gray-800 text-lg">${course.title}</h4>
+              <p class="text-gray-500 text-sm mt-1">${course.description}</p>
+              <div class="mt-3 flex gap-2 text-xs">
+                <span class="bg-gray-100 px-2 py-0.5 rounded">${course.type === 'video' ? 'Video' : 'Modul PDF'}</span>
+                ${course.hasQuiz ? '<span class="bg-amber-100 text-amber-700 px-2 py-0.5 rounded"><i class="fas fa-pen"></i> Kuis</span>' : ''}
+                ${isCompleted ? '<span class="bg-green-100 text-green-700 px-2 py-0.5 rounded"><i class="fas fa-check-circle"></i> Selesai</span>' : ''}
+              </div>
+              <div class="mt-4 flex justify-between items-center">
+                <button onclick="openCourseDetail(${course.id})" class="text-indigo-600 text-sm font-medium">Lihat Materi <i class="fas fa-arrow-right"></i></button>
+                ${course.hasQuiz && !quizDone ? `<button onclick="openQuizById(${course.id})" class="text-amber-600 text-sm"><i class="fas fa-question-circle"></i> Kerjakan Kuis</button>` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.openQuizById = (courseId) => {
+      const course = courses.find(c => c.id === courseId);
+      if(course) openQuiz(course);
+    };
+
+    function openCourseDetail(courseId) {
+      const course = courses.find(c => c.id === courseId);
+      if(!course) return;
+      const modal = document.getElementById('courseModal');
+      document.getElementById('modalCourseTitle').innerHTML = course.title;
+      const contentDiv = document.getElementById('modalCourseContent');
+      if(course.type === 'video') {
+        const isWatched = userProgress.watchedVideos.includes(course.id);
+        contentDiv.innerHTML = `
+          <div class="video-container"><iframe src="${course.videoUrl}" title="Video Player" frameborder="0" allowfullscreen></iframe></div>
+          <div class="mt-4 flex justify-between items-center">
+            <a href="${course.pdfUrl}" target="_blank" class="text-indigo-600 underline text-sm"><i class="fas fa-download"></i> ${course.pdfLabel}</a>
+            ${!isWatched ? `<button id="markWatchedBtn" class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm">Tandai Selesai Ditonton</button>` : `<span class="text-green-600 text-sm"><i class="fas fa-check"></i> Sudah ditonton</span>`}
+          </div>
+          ${course.hasQuiz && !userProgress.quizPassedCourses.includes(course.id) ? `<div class="mt-4 border-t pt-3"><button onclick="openQuizById(${course.id})" class="bg-amber-500 text-white px-4 py-2 rounded-lg text-sm">Ikuti Kuis</button></div>` : ''}
+        `;
+        if(!isWatched) {
+          setTimeout(() => {
+            const btn = document.getElementById('markWatchedBtn');
+            if(btn) btn.onclick = () => { markVideoWatched(course.id); openCourseDetail(course.id); };
+          }, 100);
+        }
+      } else { // PDF
+        const isRead = userProgress.readPdfs.includes(course.id);
+        contentDiv.innerHTML = `
+          <div class="bg-gray-100 rounded-xl p-6 text-center">
+            <i class="fas fa-file-pdf text-6xl text-red-500 mb-3"></i>
+            <p class="font-medium">${course.pdfLabel}</p>
+            <a href="${course.pdfUrl}" target="_blank" class="inline-block mt-3 bg-indigo-600 text-white px-5 py-2 rounded-lg">Baca / Unduh PDF</a>
+          </div>
+          ${!isRead ? `<div class="mt-4"><button id="markReadBtn" class="bg-emerald-600 text-white px-4 py-2 rounded-lg">Tandai Sudah Dibaca</button></div>` : `<p class="text-green-600 mt-2"><i class="fas fa-check-circle"></i> Modul sudah dibaca</p>`}
+          ${course.hasQuiz && !userProgress.quizPassedCourses.includes(course.id) ? `<div class="mt-4 border-t pt-3"><button onclick="openQuizById(${course.id})" class="bg-amber-500 text-white px-4 py-2 rounded-lg">Ikuti Kuis</button></div>` : ''}
+        `;
+        if(!isRead) {
+          setTimeout(() => {
+            const btn = document.getElementById('markReadBtn');
+            if(btn) btn.onclick = () => { markPdfRead(course.id); openCourseDetail(course.id); };
+          }, 100);
+        }
+      }
+      modal.style.display = 'flex';
+      modal.style.visibility = 'visible';
+    }
+
+    function renderWebinars() {
+      const container = document.getElementById('webinarList');
+      if(!container) return;
+      container.innerHTML = webinars.map(w => `
+        <div class="flex flex-wrap justify-between items-center p-3 bg-gray-50 rounded-xl border">
+          <div><i class="fas fa-chalkboard text-indigo-500 mr-2"></i><span class="font-medium">${w.topic}</span><br><span class="text-xs text-gray-500">${w.date} | Pembicara: ${w.speaker}</span></div>
+          <a href="${w.zoomLink}" target="_blank" class="bg-blue-600 text-white px-4 py-1 rounded-full text-sm hover:bg-blue-700 transition"><i class="fab fa-zoom"></i> Bergabung (Zoom)</a>
+        </div>
+      `).join('');
+    }
+
+    function viewCertificates() {
+      const certModal = document.getElementById('certModal');
+      const listDiv = document.getElementById('certificateList');
+      if(userProgress.certificates.length === 0) {
+        listDiv.innerHTML = '<div class="text-gray-500 text-center py-4">Belum ada sertifikat. Selesaikan materi & kuis untuk mendapat sertifikat.</div>';
+      } else {
+        listDiv.innerHTML = userProgress.certificates.map(cert => `
+          <div class="border rounded-lg p-3 flex justify-between items-center">
+            <div><i class="fas fa-certificate text-indigo-500 mr-2"></i><strong>${cert.courseTitle}</strong><br><span class="text-xs text-gray-400">Diperoleh: ${cert.date}</span></div>
+            <button onclick="downloadCertificateSimulation('${cert.courseTitle}')" class="text-indigo-600 text-sm"><i class="fas fa-download"></i> Unduh</button>
+          </div>
+        `).join('');
+      }
+      certModal.style.display = 'flex';
+      certModal.style.visibility = 'visible';
+    }
+
+    window.downloadCertificateSimulation = (title) => {
+      alert(`Simulasi unduh sertifikat untuk "${title}". Pada implementasi nyata, PDF sertifikat akan digenerate dengan nama peserta dan tanggal.`);
+    };
+
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      modal.style.display = 'none';
+      modal.style.visibility = 'hidden';
+    }
+
+    // Event listeners
+    document.getElementById('closeModalBtn')?.addEventListener('click', () => closeModal('courseModal'));
+    document.getElementById('closeQuizBtn')?.addEventListener('click', closeQuizModal);
+    document.getElementById('closeCertBtn')?.addEventListener('click', () => closeModal('certModal'));
+    document.getElementById('viewCertificatesBtn')?.addEventListener('click', viewCertificates);
+    window.addEventListener('click', (e) => {
+      if(e.target === document.getElementById('courseModal')) closeModal('courseModal');
+      if(e.target === document.getElementById('quizModal')) closeQuizModal();
+      if(e.target === document.getElementById('certModal')) closeModal('certModal');
+    });
+
+    loadProgress();
+    renderCourses();
+    renderWebinars();
+  </script>
+</body>
+</html>
